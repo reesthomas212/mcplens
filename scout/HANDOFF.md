@@ -50,4 +50,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 002 | Command injection vulnerability in scanner CLI exec() calls | critical | verified | scout | 2026-03-24 |
 | 003 | Missing meta/OG tags on ScanPage, TermsPage, PrivacyPage, CustomPage | medium | verified | scout | 2026-03-24 |
 | 004 | API v1 scan endpoint bypasses entitlement checks — paid AI features broken for API users | high | verified | scout | 2026-03-24 |
-| 005 | MongoDB duplicate key race condition in distributed rate limiter | medium | implementing | builder | 2026-03-24 |
+| 005 | MongoDB duplicate key race condition in distributed rate limiter | medium | pr-open | builder | 2026-03-24 | https://github.com/reesthomas212/mcplens/pull/4 |
