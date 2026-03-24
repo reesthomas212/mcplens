@@ -35,3 +35,11 @@
 - Finding 001 (Resend 401): Last 401 at 21:26:29, subsequent startups (21:29, 21:31) show NO Resend errors. Appears fixed — likely secret was updated. → `verified`
 - Finding 002: Previously verified, no change
 - Site status: up (deploy v28+, new image after PR #2 merge)
+
+## Run 2026-03-24 21:45
+- Phase completed: health + Phase 1b (PR verification)
+- Finding: 005 - MongoDB duplicate key race in distributed rate limiter
+- Verification: PR #3 (finding 004) merged at 21:33, deployed v31. Entitlement checks confirmed in api_v1.go. → `verified`
+- No Resend 401 in latest logs (001 stays verified)
+- New issue spotted in logs: E11000 duplicate key errors in rate_limits collection — race condition in ratelimit.go:156-177
+- Site status: up (deploy v31)
