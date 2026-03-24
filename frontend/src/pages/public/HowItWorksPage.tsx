@@ -3,10 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Logo from '../../components/Logo';
 
-const prefersReducedMotion =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-color-scheme: reduce)').matches;
-
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },

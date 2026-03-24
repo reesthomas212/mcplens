@@ -40,7 +40,7 @@ export default function LandingPage() {
   useEffect(() => {
     if (!loaded) return;
     const title = branding.appName || 'MCPLens';
-    const meta = branding.metaDescription || "MCPLens scans your Shopify store and shows how well AI shopping agents can find, evaluate, and purchase your products.";
+    const meta = branding.landingMeta || "MCPLens scans your Shopify store and shows how well AI shopping agents can find, evaluate, and purchase your products.";
     document.title = `${title} — AI Agent Readiness Scanner`;
     setMetaTag('og:title', `${title} — AI Agent Readiness Scanner`);
     if (meta) setMetaTag('og:description', meta);
@@ -52,7 +52,7 @@ export default function LandingPage() {
   }, [loaded, branding]);
 
   if (!loaded) return null;
-  if (branding.redirectLoggedIn && isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (branding.landingEnabled === false && isAuthenticated) return <Navigate to="/dashboard" replace />;
 
   function handleHeroScan(e: FormEvent) {
     e.preventDefault();

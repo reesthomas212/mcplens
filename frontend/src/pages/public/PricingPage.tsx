@@ -4,10 +4,6 @@ import { motion } from 'framer-motion';
 import Logo from '../../components/Logo';
 import RevenueCalculator from '../../components/RevenueCalculator';
 
-const prefersReducedMotion =
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
