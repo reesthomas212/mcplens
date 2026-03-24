@@ -226,6 +226,7 @@ export default function DashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [recentScans, setRecentScans] = useState<StoredScanEntry[]>([]);
   const [comparisonData, setComparisonData] = useState<ComparisonSeries[]>([]);
+  const [quickDomain, setQuickDomain] = useState('');
 
   const loadStores = () => {
     Promise.allSettled([
@@ -302,6 +303,26 @@ export default function DashboardPage() {
       {branding.dashboardHtml && (
         <div className="mb-8" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(branding.dashboardHtml) }} />
       )}
+
+      {/* Quick Scan */}
+      <div className="mb-6 bg-dark-900/50 border border-dark-800 rounded-2xl p-4">
+        <form onSubmit={(e) => { e.preventDefault(); const d = quickDomain.trim().replace(/^https?:\/\//, '').replace(/\/$/, ''); if (d) navigate(`/scan/${d}`); }} className="flex gap-3">
+          <input
+            type="text"
+            value={quickDomain}
+            onChange={e => setQuickDomain(e.target.value)}
+            placeholder="Quick scan — enter any Shopify domain"
+            className="flex-1 px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-primary-500 transition-colors text-sm"
+          />
+          <button
+            type="submit"
+            disabled={!quickDomain.trim()}
+            className="px-5 py-2.5 bg-primary-500 hover:bg-primary-600 disabled:opacity-60 text-white text-sm font-medium rounded-xl transition-colors shrink-0"
+          >
+            Scan
+          </button>
+        </form>
+      </div>
 
       {/* Page header */}
       <div className="flex items-center justify-between mb-6">

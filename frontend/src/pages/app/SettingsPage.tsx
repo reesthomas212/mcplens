@@ -6,6 +6,7 @@ import ProfileTab from './settings/ProfileTab';
 import SecurityTab from './settings/SecurityTab';
 import SessionsTab from './settings/SessionsTab';
 import BillingTab from './settings/BillingTab';
+import NotificationsTab from './settings/NotificationsTab';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -18,11 +19,12 @@ export default function SettingsPage() {
   const tabs = useMemo(() => [
     { key: 'profile' as const, label: 'Profile' },
     ...(showSecurityTab ? [{ key: 'security' as const, label: 'Security' }] : []),
+    { key: 'notifications' as const, label: 'Notifications' },
     { key: 'sessions' as const, label: 'Sessions' },
     { key: 'billing' as const, label: 'Billing' },
   ], [showSecurityTab]);
 
-  const [tab, setTab] = useState<'profile' | 'security' | 'sessions' | 'billing'>('profile');
+  const [tab, setTab] = useState<'profile' | 'security' | 'notifications' | 'sessions' | 'billing'>('profile');
 
   return (
     <div>
@@ -53,6 +55,7 @@ export default function SettingsPage() {
 
       {tab === 'profile' && <ProfileTab />}
       {tab === 'security' && <SecurityTab />}
+      {tab === 'notifications' && <NotificationsTab />}
       {tab === 'sessions' && <SessionsTab />}
       {tab === 'billing' && <BillingTab />}
     </div>

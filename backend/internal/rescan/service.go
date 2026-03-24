@@ -355,7 +355,8 @@ func (s *Service) rescanStore(ctx context.Context, job rescanJob) error {
 	return nil
 }
 
-// checkAndAlert sends an email if the score changed significantly (up or down).
+// checkAndAlert sends an email if the score changed significantly (up or down),
+// respecting the user's notification preferences.
 func (s *Service) checkAndAlert(ctx context.Context, job rescanJob, newScore int) {
 	delta := newScore - job.CurrentScore
 	absDelta := delta
@@ -370,37 +371,55 @@ func (s *Service) checkAndAlert(ctx context.Context, job rescanJob, newScore int
 		return
 	}
 
-	ownerEmail, ownerName, err := s.findTenantOwnerEmail(ctx, job.TenantID)
-	if err != nil || ownerEmail == "" {
+	owner, err := s.findTenantOwner(ctx, job.TenantID)
+	if err != nil || owner == nil || owner.Email == "" {
 		slog.Warn("Could not find tenant owner for score alert", "tenantId", job.TenantID.Hex(), "error", err)
 		return
 	}
 
-	if err := s.email.SendScoreChangeAlert(ownerEmail, ownerName, job.Domain, job.CurrentScore, newScore, delta); err != nil {
-		slog.Error("Failed to send score change alert", "domain", job.Domain, "to", ownerEmail, "error", err)
+	// Respect notification preferences (default to enabled for new users with zero-value prefs)
+	prefs := owner.NotificationPrefs
+	if delta < 0 && !prefs.ScoreDrops && (prefs.ScoreDrops || prefs.ScoreGains || prefs.WeeklyDigest) {
+		return // explicitly disabled
+	}
+	if delta > 0 && !prefs.ScoreGains && (prefs.ScoreDrops || prefs.ScoreGains || prefs.WeeklyDigest) {
+		return // explicitly disabled
+	}
+
+	if err := s.email.SendScoreChangeAlert(owner.Email, owner.DisplayName, job.Domain, job.CurrentScore, newScore, delta); err != nil {
+		slog.Error("Failed to send score change alert", "domain", job.Domain, "to", owner.Email, "error", err)
 	} else {
-		slog.Info("Score change alert sent", "domain", job.Domain, "to", ownerEmail, "delta", delta)
+		slog.Info("Score change alert sent", "domain", job.Domain, "to", owner.Email, "delta", delta)
 		s.syslog.Medium(ctx, fmt.Sprintf("Score change alert: %s changed %+d points (%d → %d), notified %s",
-			job.Domain, delta, job.CurrentScore, newScore, ownerEmail))
+			job.Domain, delta, job.CurrentScore, newScore, owner.Email))
 	}
 }
 
-// findTenantOwnerEmail looks up the owner's email for a tenant.
-func (s *Service) findTenantOwnerEmail(ctx context.Context, tenantID primitive.ObjectID) (string, string, error) {
+// findTenantOwner looks up the owner user for a tenant.
+func (s *Service) findTenantOwner(ctx context.Context, tenantID primitive.ObjectID) (*models.User, error) {
 	var membership models.TenantMembership
 	err := s.db.TenantMemberships().FindOne(ctx, bson.M{
 		"tenantId": tenantID,
 		"role":     models.RoleOwner,
 	}).Decode(&membership)
 	if err != nil {
-		return "", "", err
+		return nil, err
 	}
 
 	var user models.User
 	if err := s.db.Users().FindOne(ctx, bson.M{"_id": membership.UserID}).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// findTenantOwnerEmail is a convenience wrapper for backward compatibility.
+func (s *Service) findTenantOwnerEmail(ctx context.Context, tenantID primitive.ObjectID) (string, string, error) {
+	owner, err := s.findTenantOwner(ctx, tenantID)
+	if err != nil {
 		return "", "", err
 	}
-	return user.Email, user.DisplayName, nil
+	return owner.Email, owner.DisplayName, nil
 }
 
 // processWeeklyDigests sends a weekly digest email to each tenant that has tracked stores.
@@ -450,10 +469,18 @@ func (s *Service) processWeeklyDigests(ctx context.Context) {
 }
 
 func (s *Service) sendDigestForTenant(ctx context.Context, tenantID primitive.ObjectID, col *mongo.Collection, now time.Time) {
-	ownerEmail, ownerName, err := s.findTenantOwnerEmail(ctx, tenantID)
-	if err != nil || ownerEmail == "" {
+	owner, err := s.findTenantOwner(ctx, tenantID)
+	if err != nil || owner == nil || owner.Email == "" {
 		return
 	}
+
+	// Respect notification preferences (skip if explicitly disabled; send if all-zero/new user)
+	prefs := owner.NotificationPrefs
+	if !prefs.WeeklyDigest && (prefs.ScoreDrops || prefs.ScoreGains || prefs.WeeklyDigest) {
+		return
+	}
+
+	ownerEmail, ownerName := owner.Email, owner.DisplayName
 
 	stores, err := s.scanner.TrackedStores().ListTrackedStores(ctx, tenantID)
 	if err != nil || len(stores) == 0 {

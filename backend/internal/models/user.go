@@ -41,6 +41,14 @@ type User struct {
 	FailedLoginAttempts  int                `json:"-" bson:"failedLoginAttempts"`
 	AccountLockedUntil   *time.Time         `json:"-" bson:"accountLockedUntil,omitempty"`
 	TrialUsedAt          *time.Time         `json:"trialUsedAt,omitempty" bson:"trialUsedAt,omitempty"`
+	NotificationPrefs    NotificationPrefs  `json:"notificationPrefs" bson:"notificationPrefs"`
+}
+
+// NotificationPrefs controls which emails the user receives.
+type NotificationPrefs struct {
+	ScoreDrops    bool `json:"scoreDrops" bson:"scoreDrops"`       // alert when tracked store score drops
+	ScoreGains    bool `json:"scoreGains" bson:"scoreGains"`       // alert when tracked store score improves
+	WeeklyDigest  bool `json:"weeklyDigest" bson:"weeklyDigest"`   // weekly summary of all tracked stores
 }
 
 func (u *User) HasAuthMethod(method AuthMethod) bool {

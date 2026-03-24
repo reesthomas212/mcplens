@@ -1882,7 +1882,8 @@ func (h *AuthHandler) UpdatePreferences(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var req struct {
-		ThemePreference string `json:"themePreference"`
+		ThemePreference   string                    `json:"themePreference"`
+		NotificationPrefs *models.NotificationPrefs `json:"notificationPrefs"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request body")
@@ -1896,6 +1897,9 @@ func (h *AuthHandler) UpdatePreferences(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 		update["themePreference"] = req.ThemePreference
+	}
+	if req.NotificationPrefs != nil {
+		update["notificationPrefs"] = *req.NotificationPrefs
 	}
 
 	h.db.Users().UpdateOne(r.Context(), bson.M{"_id": user.ID}, bson.M{"$set": update})

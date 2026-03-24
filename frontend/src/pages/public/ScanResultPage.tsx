@@ -330,10 +330,20 @@ function EmailGate({ domain, score, onUnlocked }: { domain: string; score: numbe
 
 // --- Finding Card ---
 
-function FindingCard({ finding, fixUnlocked }: { finding: Finding; fixUnlocked: boolean }) {
+function FindingCard({ finding, fixUnlocked, checked, onToggle }: { finding: Finding; fixUnlocked: boolean; checked: boolean; onToggle: () => void }) {
   return (
-    <div className={`border rounded-xl p-4 ${severityBg(finding.severity)}`}>
+    <div className={`border rounded-xl p-4 ${checked ? 'bg-slate-50 border-slate-200 opacity-70' : severityBg(finding.severity)} transition-all`}>
       <div className="flex items-start gap-3">
+        {fixUnlocked && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggle(); }}
+            className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+              checked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-slate-400'
+            }`}
+          >
+            {checked && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+          </button>
+        )}
         <span
           className="px-2 py-0.5 text-xs font-semibold rounded-full text-white shrink-0 mt-0.5"
           style={{ backgroundColor: severityColor(finding.severity) }}
@@ -341,23 +351,44 @@ function FindingCard({ finding, fixUnlocked }: { finding: Finding; fixUnlocked: 
           {finding.severity.toUpperCase()}
         </span>
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-slate-900 text-sm">{finding.title}</h4>
+          <h4 className={`font-semibold text-sm ${checked ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{finding.title}</h4>
           <p className="text-xs text-slate-500 mt-0.5">{finding.category}</p>
-          <p className="text-sm text-slate-700 mt-2">{finding.impact}</p>
-          {fixUnlocked ? (
+          {!checked && <p className="text-sm text-slate-700 mt-2">{finding.impact}</p>}
+          {fixUnlocked && !checked ? (
             <div className="mt-3 bg-white/70 border border-slate-200 rounded-lg p-3">
               <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">How to fix</div>
               <p className="text-sm text-slate-700">{finding.fix}</p>
             </div>
-          ) : (
+          ) : !fixUnlocked ? (
             <div className="mt-3 bg-slate-100/80 border border-slate-200 rounded-lg p-3 flex items-center gap-2">
               <svg className="w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <span className="text-sm text-slate-500 italic">Enter your email above to unlock fix instructions</span>
             </div>
-          )}
+          ) : null}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function FixProgressBar({ total, completed }: { total: number; completed: number }) {
+  if (total === 0) return null;
+  const pct = Math.round((completed / total) * 100);
+  return (
+    <div className="mb-4 bg-white border border-slate-200 rounded-xl p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-semibold text-slate-900">Fix Progress</span>
+        <span className="text-sm font-bold" style={{ color: pct === 100 ? '#059669' : '#3b82f6' }}>
+          {completed}/{total} {pct === 100 ? '— All done!' : ''}
+        </span>
+      </div>
+      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500"
+          style={{ width: `${pct}%`, backgroundColor: pct === 100 ? '#059669' : '#3b82f6' }}
+        />
       </div>
     </div>
   );
@@ -703,7 +734,9 @@ export default function ScanResultPage() {
   const { domain } = useParams<{ domain: string }>();
   const navigate = useNavigate();
   const [result, setResult] = useState<ScanResult | null>(null);
+  const [previousScore, setPreviousScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [rescanning, setRescanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
   const [newDomain, setNewDomain] = useState('');
@@ -711,6 +744,21 @@ export default function ScanResultPage() {
   const [badgeCopied, setBadgeCopied] = useState(false);
   const [fixToken, setFixToken] = useState<string | null>(() => sessionStorage.getItem('mcplens_fix_token'));
   const [fixUnlocked, setFixUnlocked] = useState(false);
+  const [checkedFixes, setCheckedFixes] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem(`mcplens_fixes_${domain}`);
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch { return new Set(); }
+  });
+
+  function toggleFix(title: string) {
+    setCheckedFixes(prev => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title); else next.add(title);
+      localStorage.setItem(`mcplens_fixes_${domain}`, JSON.stringify([...next]));
+      return next;
+    });
+  }
 
   // Check if existing token is valid on mount
   useEffect(() => {
@@ -824,6 +872,22 @@ export default function ScanResultPage() {
     });
   }
 
+  async function handleRescan() {
+    if (!domain || rescanning) return;
+    setRescanning(true);
+    setPreviousScore(result?.compositeScore ?? null);
+    try {
+      const fresh = await scanApi.trigger(domain);
+      setResult(fresh);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Rescan failed.');
+    } finally {
+      setRescanning(false);
+    }
+  }
+
+  const scoreDelta = previousScore !== null && result ? result.compositeScore - previousScore : null;
+
   const categoriesWithKillers = result?.categories.filter(
     c => c.scoreKillers && c.scoreKillers.length > 0
   ) ?? [];
@@ -884,20 +948,49 @@ export default function ScanResultPage() {
           <div className="flex flex-col gap-8">
             {/* Score Hero */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 flex flex-col sm:flex-row items-center gap-8">
-              <ScoreCircle score={result.compositeScore} />
+              <div className="relative">
+                <ScoreCircle score={result.compositeScore} />
+                {scoreDelta !== null && scoreDelta !== 0 && (
+                  <div className={`absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-xs font-bold ${
+                    scoreDelta > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {scoreDelta > 0 ? '+' : ''}{scoreDelta}
+                  </div>
+                )}
+              </div>
               <div className="flex-1 text-center sm:text-left">
                 <h2 className="text-xl font-bold text-slate-900 mb-2">
                   AI Agent Readiness Score
                 </h2>
+                {scoreDelta !== null && scoreDelta !== 0 && (
+                  <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium mb-3 ${
+                    scoreDelta > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+                  }`}>
+                    {scoreDelta > 0 ? '↑' : '↓'} {Math.abs(scoreDelta)} points vs previous scan
+                    {previousScore !== null && <span className="text-xs opacity-70">({previousScore} → {result.compositeScore})</span>}
+                  </div>
+                )}
                 <p className="text-slate-500 text-sm mb-4 leading-relaxed">
                   Composite score across {result.testedCategories.length} tested categories
                   from {result.scenarioCount} scenario{result.scenarioCount !== 1 ? 's' : ''}.
                 </p>
-                <div className="flex flex-wrap gap-4 justify-center sm:justify-start text-xs text-slate-400">
-                  <span>Version: {result.version}</span>
-                  <span>Duration: {(result.durationMs / 1000).toFixed(1)}s</span>
+                <div className="flex flex-wrap gap-4 items-center justify-center sm:justify-start">
+                  <button
+                    onClick={handleRescan}
+                    disabled={rescanning}
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white font-medium rounded-full transition-colors text-sm"
+                  >
+                    {rescanning ? 'Rescanning...' : 'Scan Again'}
+                  </button>
+                  <button
+                    onClick={handleCopyUrl}
+                    className="px-4 py-2 bg-white text-slate-600 border border-slate-300 hover:bg-slate-50 font-medium rounded-full transition-colors text-sm"
+                  >
+                    {copied ? 'Copied!' : 'Share'}
+                  </button>
+                  <span className="text-xs text-slate-400">v{result.version} &middot; {(result.durationMs / 1000).toFixed(1)}s</span>
                   {result.partialResults && (
-                    <span className="text-amber-600">Partial scan</span>
+                    <span className="text-xs text-amber-600">Partial scan</span>
                   )}
                 </div>
               </div>
@@ -981,11 +1074,13 @@ export default function ScanResultPage() {
             {(() => {
               const findings = generateFindings(result);
               if (findings.length === 0) return null;
+              const completedCount = findings.filter(f => checkedFixes.has(f.title)).length;
               return (
                 <div>
                   <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-4">
                     Issues Found ({findings.length})
                   </h2>
+                  {fixUnlocked && <FixProgressBar total={findings.length} completed={completedCount} />}
                   {!fixUnlocked && (
                     <div className="mb-4">
                       <EmailGate
@@ -1000,7 +1095,7 @@ export default function ScanResultPage() {
                   )}
                   <div className="flex flex-col gap-3">
                     {findings.map((f, i) => (
-                      <FindingCard key={i} finding={f} fixUnlocked={fixUnlocked} />
+                      <FindingCard key={i} finding={f} fixUnlocked={fixUnlocked} checked={checkedFixes.has(f.title)} onToggle={() => toggleFix(f.title)} />
                     ))}
                   </div>
                   {fixUnlocked && (
@@ -1028,19 +1123,7 @@ export default function ScanResultPage() {
               </div>
             )}
 
-            {/* Share section */}
-            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row items-center gap-4">
-              <div className="flex-1">
-                <div className="text-sm font-semibold text-slate-900 mb-1">Share this result</div>
-                <div className="text-xs text-slate-400 truncate">{window.location.href}</div>
-              </div>
-              <button
-                onClick={handleCopyUrl}
-                className="px-4 py-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 text-sm font-medium rounded-full transition-colors shrink-0"
-              >
-                {copied ? 'Copied!' : 'Copy URL'}
-              </button>
-            </div>
+            {/* Share + Badge section */}
 
             {/* Badge section */}
             <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col gap-4">
