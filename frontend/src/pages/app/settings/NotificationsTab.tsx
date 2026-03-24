@@ -2,12 +2,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '../../../contexts/AuthContext';
 import { getErrorMessage } from '../../../utils/errors';
-
-interface NotificationPrefs {
-  scoreDrops: boolean;
-  scoreGains: boolean;
-  weeklyDigest: boolean;
-}
+import type { NotificationPrefs } from '../../../types';
 
 export default function NotificationsTab() {
   const { user } = useAuth();

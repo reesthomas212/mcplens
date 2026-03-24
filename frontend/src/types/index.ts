@@ -1,3 +1,9 @@
+export interface NotificationPrefs {
+  scoreDrops: boolean;
+  scoreGains: boolean;
+  weeklyDigest: boolean;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -7,6 +13,7 @@ export interface User {
   authMethods: string[];
   totpEnabled: boolean;
   themePreference: 'dark' | 'light' | 'system';
+  notificationPrefs?: NotificationPrefs;
   onboardingCompletedAt?: string;
   createdAt: string;
   updatedAt: string;
