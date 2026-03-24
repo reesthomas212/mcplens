@@ -2,7 +2,7 @@
 id: 009
 type: ux
 severity: high
-status: new
+status: implementing
 found: 2026-03-24
 phase: product
 ---
