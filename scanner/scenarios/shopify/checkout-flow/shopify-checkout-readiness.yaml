@@ -1,0 +1,57 @@
+name: "shopify-checkout-readiness"
+description: "Checks that the store exposes checkout capability and that products have the pricing and currency data an agent needs to complete a purchase — read-only, does not call checkout"
+category: checkout-flow
+requires_capabilities:
+  - checkout
+  - search
+
+setup:
+  - action: search
+    params: { query: "shoes bag jacket", limit: 5, context: "browsing" }
+    save_as: search_results
+
+steps:
+  - assertion: array_non_empty
+    source: search_results.products
+    severity: high
+    score_weight: 3
+    message: "Search returned no products — cannot evaluate checkout readiness"
+
+  - assertion: each_item_has_field
+    source: search_results.products
+    field: product_id
+    condition: non_null
+    severity: high
+    score_weight: 8
+    message: "Products missing 'product_id' — agents cannot identify items for checkout"
+
+  - assertion: each_item_has_field
+    source: search_results.products
+    field: price_range
+    condition: non_null
+    severity: high
+    score_weight: 8
+    message: "Products missing 'price_range' — agents cannot present total cost to buyer before checkout"
+
+  - assertion: field_present
+    source: search_results.products.0.price_range
+    field: currency
+    severity: high
+    score_weight: 8
+    message: "Price data missing 'currency' — agents cannot confirm purchase currency with buyer"
+
+  - assertion: field_present
+    source: search_results.products.0.price_range
+    field: min
+    severity: medium
+    score_weight: 6
+    message: "Price data missing 'min' — agents cannot show a starting price to the buyer"
+
+  - assertion: field_present
+    source: search_results.products.0
+    field: title
+    severity: medium
+    score_weight: 5
+    message: "Product missing 'title' — agents cannot confirm item identity with buyer before checkout"
+
+teardown: []

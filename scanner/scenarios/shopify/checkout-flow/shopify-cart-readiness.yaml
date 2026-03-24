@@ -1,0 +1,60 @@
+name: "shopify-cart-readiness"
+description: "Checks that products expose all fields an agent needs to construct an add-to-cart request (product_id, variant_id, availability) — read-only, does not call add_to_cart"
+category: checkout-flow
+requires_capabilities:
+  - add_to_cart
+  - search
+
+setup:
+  - action: search
+    params: { query: "shirt bag shoes", limit: 5, context: "browsing" }
+    save_as: search_results
+
+steps:
+  - assertion: array_non_empty
+    source: search_results.products
+    severity: high
+    score_weight: 3
+    message: "Search returned no products — cannot evaluate cart readiness"
+
+  - assertion: each_item_has_field
+    source: search_results.products
+    field: product_id
+    condition: non_null
+    severity: high
+    score_weight: 10
+    message: "Products missing 'product_id' — agents cannot add items to cart without a product identifier"
+
+  - assertion: percentage_threshold
+    source: search_results.products
+    field: product_id
+    condition: non_null
+    threshold: 90
+    severity: high
+    score_weight: 10
+    on_fail: score_killer
+    score_killer_cap: 40
+    message: "{fail_pct}% of products lack product_id — cart operations would fail for most items"
+
+  - assertion: field_present
+    source: search_results.products.0
+    field: variants
+    severity: high
+    score_weight: 8
+    message: "First product missing 'variants' — agents need variant data to select size/color and add to cart"
+
+  - assertion: field_present
+    source: search_results.products.0.variants.0
+    field: variant_id
+    severity: high
+    score_weight: 8
+    message: "First variant missing 'variant_id' — agents cannot specify which variant to add to cart"
+
+  - assertion: field_present
+    source: search_results.products.0.variants.0
+    field: available
+    severity: medium
+    score_weight: 6
+    message: "First variant missing 'available' field — agents cannot check stock before adding to cart, risking failed orders"
+
+teardown: []
