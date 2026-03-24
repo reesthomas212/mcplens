@@ -53,5 +53,5 @@ This file is the coordination protocol between three Claude Code instances:
 | 005 | MongoDB duplicate key race condition in distributed rate limiter | medium | verified | scout | 2026-03-24 |
 | 006 | Docker container runs as root — no USER directive in Dockerfile.saas | high | verified | scout | 2026-03-24 |
 | 007 | Landing page assumes store owners know what MCP is — needs knowledge bridge | high | deferred | master | 2026-03-24 |
-| 008 | Checkout flow has 25% score weight but only 1 scenario — never tests cart or checkout | high | implementing | builder | 2026-03-24 |
+| 008 | Checkout flow has 25% score weight but only 1 scenario — never tests cart or checkout | high | pr-open | builder | 2026-03-24 | https://github.com/reesthomas212/mcplens/pull/6 |
 | 009 | Free scan results lack "what to do next" moment — upsells before value, broken CTA link | high | new | scout | 2026-03-24 |
