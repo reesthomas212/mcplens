@@ -2,7 +2,7 @@
 id: 003
 type: ux
 severity: medium
-status: new
+status: implementing
 found: 2026-03-24
 phase: audit
 ---
