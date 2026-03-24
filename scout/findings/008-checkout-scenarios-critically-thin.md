@@ -2,7 +2,7 @@
 id: 008
 type: bug
 severity: high
-status: new
+status: implementing
 found: 2026-03-24
 phase: audit
 ---
