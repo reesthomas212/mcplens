@@ -173,7 +173,19 @@ func (rl *RateLimiter) allowDistributed(key string, config RateLimitConfig) (boo
 				opts,
 			).Decode(&doc)
 			if err != nil {
-				return false, 0, now, err
+				if mongo.IsDuplicateKeyError(err) {
+					// Race: another request just created the doc — retry the increment.
+					err = rl.collection.FindOneAndUpdate(ctx,
+						bson.M{"_id": key, "windowEnd": bson.M{"$gt": now}},
+						bson.M{"$inc": bson.M{"count": 1}},
+						opts,
+					).Decode(&doc)
+					if err != nil {
+						return false, 0, now, err
+					}
+				} else {
+					return false, 0, now, err
+				}
 			}
 		} else {
 			return false, 0, now, err
