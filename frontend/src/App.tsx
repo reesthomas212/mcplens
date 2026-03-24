@@ -67,6 +67,8 @@ import ScanPage from './pages/public/ScanPage';
 import ScanResultPage from './pages/public/ScanResultPage';
 import TermsPage from './pages/public/TermsPage';
 import PrivacyPage from './pages/public/PrivacyPage';
+import LeaderboardPage from './pages/public/LeaderboardPage';
+import EcosystemReportPage from './pages/public/EcosystemReportPage';
 
 function LazyFallback() {
   return (
@@ -151,6 +153,8 @@ export default function App() {
                     <Route path="/scan/:domain" element={<ScanResultPage />} />
 
                     {/* Legal pages */}
+                    <Route path="/leaderboard" element={<LeaderboardPage />} />
+                    <Route path="/report" element={<EcosystemReportPage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
 

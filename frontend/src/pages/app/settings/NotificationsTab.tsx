@@ -10,6 +10,7 @@ export default function NotificationsTab() {
     scoreDrops: true,
     scoreGains: true,
     weeklyDigest: true,
+    slackWebhook: '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -18,7 +19,7 @@ export default function NotificationsTab() {
       const p = user.notificationPrefs;
       // If all false (new user, zero-value), default to all enabled
       const allFalse = !p.scoreDrops && !p.scoreGains && !p.weeklyDigest;
-      setPrefs(allFalse ? { scoreDrops: true, scoreGains: true, weeklyDigest: true } : p);
+      setPrefs(allFalse ? { scoreDrops: true, scoreGains: true, weeklyDigest: true, slackWebhook: p.slackWebhook || '' } : { ...p, slackWebhook: p.slackWebhook || '' });
     }
   }, [user]);
 
@@ -85,6 +86,25 @@ export default function NotificationsTab() {
           label="Weekly digest"
           description="Receive a weekly summary of all tracked store scores and trends"
         />
+      </div>
+
+      <div>
+        <h2 className="text-lg font-semibold text-dark-50 mb-1">Slack Integration</h2>
+        <p className="text-sm text-dark-400 mb-3">Get score alerts in your Slack channel. Paste an incoming webhook URL.</p>
+      </div>
+
+      <div className="bg-dark-900/50 border border-dark-800 rounded-xl p-4">
+        <label className="block text-sm font-medium text-dark-100 mb-2">Slack Webhook URL</label>
+        <input
+          type="url"
+          value={prefs.slackWebhook || ''}
+          onChange={(e) => setPrefs(p => ({ ...p, slackWebhook: e.target.value }))}
+          placeholder="https://hooks.slack.com/services/T00/B00/xxxx"
+          className="w-full px-4 py-2.5 bg-dark-800 border border-dark-700 rounded-xl text-dark-100 placeholder-dark-500 focus:outline-none focus:border-primary-500 transition-colors text-sm"
+        />
+        <p className="text-xs text-dark-500 mt-2">
+          Create a webhook at <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer" className="text-primary-400 hover:underline">api.slack.com/apps</a> &rarr; Incoming Webhooks.
+        </p>
       </div>
 
       <button

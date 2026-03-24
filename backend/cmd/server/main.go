@@ -689,6 +689,9 @@ func main() {
 	// GET /api/benchmarks — public, returns aggregate ecosystem benchmark data
 	api.HandleFunc("/benchmarks", scannerHandler.GetBenchmarks).Methods("GET")
 
+	// GET /api/leaderboard — public, returns top-scoring stores
+	api.HandleFunc("/leaderboard", scannerHandler.GetLeaderboard).Methods("GET")
+
 	// --- Lead capture routes (public, rate-limited) ---
 	api.HandleFunc("/leads", rateLimiter.RateLimitHandler(
 		middleware.ScanPublicLimit,

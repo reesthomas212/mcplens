@@ -2,6 +2,7 @@ export interface NotificationPrefs {
   scoreDrops: boolean;
   scoreGains: boolean;
   weeklyDigest: boolean;
+  slackWebhook?: string;
 }
 
 export interface User {

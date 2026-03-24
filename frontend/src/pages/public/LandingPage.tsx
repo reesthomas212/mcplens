@@ -928,6 +928,9 @@ export default function LandingPage() {
             <Link to="/scan" className="hover:text-slate-900 transition-colors">
               Scan a Store
             </Link>
+            <Link to="/leaderboard" className="hover:text-slate-900 transition-colors">
+              Leaderboard
+            </Link>
             <a href="#pricing" className="hover:text-slate-900 transition-colors">
               Pricing
             </a>

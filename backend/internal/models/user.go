@@ -46,9 +46,10 @@ type User struct {
 
 // NotificationPrefs controls which emails the user receives.
 type NotificationPrefs struct {
-	ScoreDrops    bool `json:"scoreDrops" bson:"scoreDrops"`       // alert when tracked store score drops
-	ScoreGains    bool `json:"scoreGains" bson:"scoreGains"`       // alert when tracked store score improves
-	WeeklyDigest  bool `json:"weeklyDigest" bson:"weeklyDigest"`   // weekly summary of all tracked stores
+	ScoreDrops    bool   `json:"scoreDrops" bson:"scoreDrops"`       // alert when tracked store score drops
+	ScoreGains    bool   `json:"scoreGains" bson:"scoreGains"`       // alert when tracked store score improves
+	WeeklyDigest  bool   `json:"weeklyDigest" bson:"weeklyDigest"`   // weekly summary of all tracked stores
+	SlackWebhook  string `json:"slackWebhook" bson:"slackWebhook,omitempty"` // Slack incoming webhook URL
 }
 
 func (u *User) HasAuthMethod(method AuthMethod) bool {

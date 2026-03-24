@@ -3,9 +3,12 @@
 package rescan
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"time"
 
@@ -393,6 +396,19 @@ func (s *Service) checkAndAlert(ctx context.Context, job rescanJob, newScore int
 		s.syslog.Medium(ctx, fmt.Sprintf("Score change alert: %s changed %+d points (%d → %d), notified %s",
 			job.Domain, delta, job.CurrentScore, newScore, owner.Email))
 	}
+
+	// Send Slack notification if configured
+	if webhook := owner.NotificationPrefs.SlackWebhook; webhook != "" {
+		direction := "improved"
+		emoji := ":chart_with_upwards_trend:"
+		if delta < 0 {
+			direction = "dropped"
+			emoji = ":chart_with_downwards_trend:"
+		}
+		s.sendSlack(webhook, fmt.Sprintf("%s *%s* %s *%+d* points (%d → %d)\n<%s/scan/%s|View Report>",
+			emoji, job.Domain, direction, delta, job.CurrentScore, newScore,
+			os.Getenv("FRONTEND_URL"), job.Domain))
+	}
 }
 
 // findTenantOwner looks up the owner user for a tenant.
@@ -511,4 +527,23 @@ func (s *Service) sendDigestForTenant(ctx context.Context, tenantID primitive.Ob
 	)
 
 	slog.Info("Weekly digest sent", "tenantId", tenantID.Hex(), "to", ownerEmail, "stores", len(stores))
+}
+
+// sendSlack posts a message to a Slack incoming webhook. Best-effort, no retries.
+func (s *Service) sendSlack(webhookURL, text string) {
+	payload, _ := json.Marshal(map[string]string{"text": text})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, "POST", webhookURL, bytes.NewReader(payload))
+	if err != nil {
+		slog.Warn("Slack webhook request failed", "error", err)
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		slog.Warn("Slack webhook failed", "error", err)
+		return
+	}
+	resp.Body.Close()
 }

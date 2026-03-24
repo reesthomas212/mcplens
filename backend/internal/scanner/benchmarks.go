@@ -162,6 +162,56 @@ func (b *BenchmarkService) refresh(ctx context.Context) error {
 	return nil
 }
 
+// LeaderboardEntry represents one store on the public leaderboard.
+type LeaderboardEntry struct {
+	Domain    string    `json:"domain"`
+	Score     int       `json:"score"`
+	ScannedAt time.Time `json:"scannedAt"`
+}
+
+// GetLeaderboard returns the top N stores by score.
+func (b *BenchmarkService) GetLeaderboard(ctx context.Context, limit int) ([]LeaderboardEntry, error) {
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, 15*time.Second)
+	defer cancel()
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$sort", Value: bson.D{{Key: "domain", Value: 1}, {Key: "createdAt", Value: -1}}}},
+		{{Key: "$group", Value: bson.M{
+			"_id":       "$domain",
+			"score":     bson.M{"$first": "$compositeScore"},
+			"scannedAt": bson.M{"$first": "$createdAt"},
+		}}},
+		{{Key: "$match", Value: bson.M{"score": bson.M{"$gt": 0}}}},
+		{{Key: "$sort", Value: bson.D{{Key: "score", Value: -1}}}},
+		{{Key: "$limit", Value: limit}},
+	}
+
+	cursor, err := b.col.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []struct {
+		Domain    string    `bson:"_id"`
+		Score     int       `bson:"score"`
+		ScannedAt time.Time `bson:"scannedAt"`
+	}
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+
+	entries := make([]LeaderboardEntry, len(results))
+	for i, r := range results {
+		entries[i] = LeaderboardEntry{Domain: r.Domain, Score: r.Score, ScannedAt: r.ScannedAt}
+	}
+	return entries, nil
+}
+
 // computePercentile returns what percentage of scores this score beats (0-100).
 func computePercentile(sortedScores []int, score int) int {
 	if len(sortedScores) == 0 {

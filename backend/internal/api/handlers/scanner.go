@@ -433,6 +433,23 @@ func (h *ScannerHandler) withBenchmark(ctx context.Context, scan *scanner.Stored
 	}{scan, bench}
 }
 
+// GetLeaderboard handles GET /api/leaderboard.
+// Returns top-scoring stores (public, no auth).
+func (h *ScannerHandler) GetLeaderboard(w http.ResponseWriter, r *http.Request) {
+	limitStr := r.URL.Query().Get("limit")
+	limit, _ := strconv.Atoi(limitStr)
+
+	entries, err := h.service.Benchmarks().GetLeaderboard(r.Context(), limit)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to retrieve leaderboard")
+		return
+	}
+	respondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"stores": entries,
+		"total":  len(entries),
+	})
+}
+
 // GetBenchmarks handles GET /api/benchmarks.
 // Returns aggregate ecosystem benchmark data (public, no auth).
 func (h *ScannerHandler) GetBenchmarks(w http.ResponseWriter, r *http.Request) {
