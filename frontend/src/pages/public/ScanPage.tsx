@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -6,9 +6,40 @@ const prefersReducedMotion =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+function setMetaTag(property: string, content: string) {
+  const selector = `meta[property="${property}"], meta[name="${property}"]`;
+  let el = document.querySelector<HTMLMetaElement>(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    if (property.startsWith('og:') || property.startsWith('fb:')) {
+      el.setAttribute('property', property);
+    } else {
+      el.setAttribute('name', property);
+    }
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
 export default function ScanPage() {
   const [domain, setDomain] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'Scan Your Shopify Store | MCPLens';
+    setMetaTag('og:title', 'Scan Your Shopify Store | MCPLens');
+    setMetaTag('og:description', 'Find out how ready your Shopify store is for AI buying agents. Free instant scan.');
+    setMetaTag('og:image', `${window.location.origin}/og-image.png`);
+    setMetaTag('og:type', 'website');
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', 'Scan Your Shopify Store | MCPLens');
+    setMetaTag('twitter:description', 'Find out how ready your Shopify store is for AI buying agents. Free instant scan.');
+
+    return () => {
+      document.title = prevTitle;
+    };
+  }, []);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

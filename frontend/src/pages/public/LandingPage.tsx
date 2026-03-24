@@ -7,6 +7,21 @@ import { useAuth } from '../../contexts/AuthContext';
 import ScanDemo from '../../components/ScanDemo';
 import Logo from '../../components/Logo';
 
+function setMetaTag(property: string, content: string) {
+  const selector = `meta[property="${property}"], meta[name="${property}"]`;
+  let el = document.querySelector<HTMLMetaElement>(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    if (property.startsWith('og:') || property.startsWith('fb:')) {
+      el.setAttribute('property', property);
+    } else {
+      el.setAttribute('name', property);
+    }
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
 // ── Reduced motion ──────────────────────────────────────────────────────────
 const prefersReducedMotion =
   typeof window !== 'undefined' &&
@@ -82,6 +97,14 @@ export default function LandingPage() {
       }
       metaDesc.content = meta;
     }
+
+    setMetaTag('og:title', title);
+    if (meta) setMetaTag('og:description', meta);
+    setMetaTag('og:image', `${window.location.origin}/og-image.png`);
+    setMetaTag('og:type', 'website');
+    setMetaTag('twitter:card', 'summary_large_image');
+    setMetaTag('twitter:title', title);
+    if (meta) setMetaTag('twitter:description', meta);
 
     return () => {
       document.title = prevTitle;
