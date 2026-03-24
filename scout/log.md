@@ -59,3 +59,11 @@
 - Phase 1b: PRs #4 and #5 still open. No new errors in logs.
 - Research: Shopify has 6.9M stores, most not prepared for AI agents. No direct competitor to MCPLens found — market is guides/consulting (wearepresta, ucphub.ai), not scanning tools. MCPLens has first-mover advantage but needs to bridge the knowledge gap for non-technical store owners.
 - Site status: up
+
+## Run 2026-03-24 22:30
+- Cycle type: code
+- Phase completed: audit (scenarios)
+- Finding: 008 - Checkout flow has 25% score weight but only 1 scenario that never tests cart/checkout
+- Phase 1b: PRs #4 and #5 still open. No errors in logs.
+- Scenarios audit found 16 issues total: hollow checkout scoring, missing inventory test, redundant assertions, aggressive score killers, variant assumption bugs
+- Site status: up
