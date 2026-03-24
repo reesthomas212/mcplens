@@ -66,7 +66,7 @@ var (
 	TelemetryAnonymousLimit     = RateLimitConfig{MaxRequests: 60, Window: time.Minute}
 	TelemetryAuthenticatedLimit = RateLimitConfig{MaxRequests: 120, Window: time.Minute}
 	// Scanner limits
-	ScanPublicLimit        = RateLimitConfig{MaxRequests: 5, Window: time.Hour}
+	ScanPublicLimit        = RateLimitConfig{MaxRequests: 500, Window: time.Hour} // Raised for batch seeding — revert to 5 after
 	ScanAuthenticatedLimit = RateLimitConfig{MaxRequests: 20, Window: time.Hour}
 )
 
