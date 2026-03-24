@@ -2,7 +2,7 @@
 id: 006
 type: security
 severity: high
-status: new
+status: implementing
 found: 2026-03-24
 phase: audit
 ---
