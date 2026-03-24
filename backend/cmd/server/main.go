@@ -369,6 +369,7 @@ func main() {
 	scannerHandler.SetDB(database)
 	ogHandler := handlers.NewOGHandler(scannerSvc)
 	apiV1Handler := handlers.NewAPIV1Handler(scannerSvc)
+	apiV1Handler.SetDB(database)
 	agencyBrandingHandler := handlers.NewAgencyBrandingHandler(database, scannerSvc)
 	leadsHandler := handlers.NewLeadsHandler(database)
 	brandingHandler.SetAuthProviders(map[string]bool{

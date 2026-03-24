@@ -1,24 +1,34 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
+	"lastsaas/internal/db"
 	"lastsaas/internal/middleware"
+	"lastsaas/internal/models"
 	"lastsaas/internal/scanner"
 
 	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // APIV1Handler handles versioned public API endpoints authenticated via API keys.
 type APIV1Handler struct {
 	service *scanner.Service
+	db      *db.MongoDB
 }
 
 // NewAPIV1Handler creates a new APIV1Handler.
 func NewAPIV1Handler(svc *scanner.Service) *APIV1Handler {
 	return &APIV1Handler{service: svc}
+}
+
+// SetDB attaches the MongoDB instance for entitlement checks.
+func (h *APIV1Handler) SetDB(database *db.MongoDB) {
+	h.db = database
 }
 
 // TriggerScan handles POST /api/v1/scan.
@@ -39,14 +49,20 @@ func (h *APIV1Handler) TriggerScan(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
-	// Attach tenant ID from context when available (API key auth populates it for admin keys).
+	// Attach tenant ID and entitlement-based scan options from context.
 	var tenantID *primitive.ObjectID
+	scanOpts := scanner.ScanOptions{}
 	if tenant, ok := middleware.GetTenantFromContext(ctx); ok {
 		id := tenant.ID
 		tenantID = &id
+		scanOpts.Assess = h.hasAIAssessmentEntitlement(ctx, tenant)
+		scanOpts.Simulate = h.hasSimulationEntitlement(ctx, tenant)
+		if h.hasCrossAgentEntitlement(ctx, tenant) {
+			scanOpts.Personas = "default,price,quality,speed"
+		}
 	}
 
-	stored, err := h.service.ScanStore(ctx, req.Domain, tenantID)
+	stored, err := h.service.ScanStore(ctx, req.Domain, tenantID, scanOpts)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Scan failed: "+err.Error())
 		return
@@ -100,4 +116,46 @@ func (h *APIV1Handler) GetLatestStoreScan(w http.ResponseWriter, r *http.Request
 	}
 
 	respondWithJSON(w, http.StatusOK, scan)
+}
+
+func (h *APIV1Handler) hasAIAssessmentEntitlement(ctx context.Context, tenant *models.Tenant) bool {
+	if h.db == nil || tenant.PlanID == nil {
+		return false
+	}
+	var plan models.Plan
+	if err := h.db.Plans().FindOne(ctx, bson.M{"_id": *tenant.PlanID}).Decode(&plan); err != nil {
+		return false
+	}
+	if ent, ok := plan.Entitlements["ai_assessment"]; ok && ent.Type == models.EntitlementTypeBool {
+		return ent.BoolValue
+	}
+	return false
+}
+
+func (h *APIV1Handler) hasSimulationEntitlement(ctx context.Context, tenant *models.Tenant) bool {
+	if h.db == nil || tenant.PlanID == nil {
+		return false
+	}
+	var plan models.Plan
+	if err := h.db.Plans().FindOne(ctx, bson.M{"_id": *tenant.PlanID}).Decode(&plan); err != nil {
+		return false
+	}
+	if ent, ok := plan.Entitlements["ai_simulation"]; ok && ent.Type == models.EntitlementTypeBool {
+		return ent.BoolValue
+	}
+	return false
+}
+
+func (h *APIV1Handler) hasCrossAgentEntitlement(ctx context.Context, tenant *models.Tenant) bool {
+	if h.db == nil || tenant.PlanID == nil {
+		return false
+	}
+	var plan models.Plan
+	if err := h.db.Plans().FindOne(ctx, bson.M{"_id": *tenant.PlanID}).Decode(&plan); err != nil {
+		return false
+	}
+	if ent, ok := plan.Entitlements["cross_agent"]; ok && ent.Type == models.EntitlementTypeBool {
+		return ent.BoolValue
+	}
+	return false
 }
