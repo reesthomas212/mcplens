@@ -1,12 +1,12 @@
 {
-  "finding_counter": 5,
-  "last_run": "2026-03-24T21:45:00Z",
-  "last_git_sha": "8a172bf",
+  "finding_counter": 6,
+  "last_run": "2026-03-24T22:00:00Z",
+  "last_git_sha": "e66385e",
   "last_crawl": {
     "mcplens.dev": "up",
     "mcplens.dev/scan": "up",
     "mcplens.dev/login": "up"
   },
   "verified_findings": ["001", "002", "003", "004"],
-  "phase_rotation": "config"
+  "phase_rotation": "scenarios"
 }

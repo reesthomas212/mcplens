@@ -43,3 +43,11 @@
 - No Resend 401 in latest logs (001 stays verified)
 - New issue spotted in logs: E11000 duplicate key errors in rate_limits collection — race condition in ratelimit.go:156-177
 - Site status: up (deploy v31)
+
+## Run 2026-03-24 22:00
+- Phase completed: health + Phase 1b + audit (config)
+- Finding: 006 - Docker container runs as root (no USER directive)
+- Phase 1b: 005 still implementing, no PR opened yet. No duplicate key errors in latest logs.
+- New deploy image (01KMGXBS8M928PWS5M9WP5Y97T) from master features, not builder fixes.
+- Config audit found 12 issues — root container, cold-start config, missing env vars, image bloat queued for future
+- Site status: up
