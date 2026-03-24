@@ -1218,7 +1218,7 @@ export default function ScanResultPage() {
                         Want automated scans, CI/CD integration, and store tracking?
                       </p>
                       <Link
-                        to="/scan"
+                        to="/plan"
                         className="inline-block mt-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors text-sm"
                       >
                         View Pro Plans
