@@ -73,6 +73,8 @@ phase: health | crawl | audit | research
 
 **Evidence:** {What you observed — fetch results, code snippets, error messages}
 
+**Why this matters:** {Explain why this finding is important for MCPLens specifically — how it impacts users, revenue, security, or product goals. The builder will verify this explanation against project goals and may reject findings that aren't justified. Be concrete: tie it to user flows, conversion, trust, or competitive positioning.}
+
 **Suggested Fix:** {One concrete, actionable recommendation}
 ```
 

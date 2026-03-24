@@ -21,6 +21,8 @@ This appears on every health check cycle (19:48:02, 19:53:03, 19:56:31).
 
 **Regression note (2026-03-24 20:40):** Builder marked as `done` but the Fly.io logs at 20:37:32 still show `resend API returned status 401`. The deployment image has not changed (still version 25, image `mcplens:deployment-01KMFWB4CXAR5RY66G1KTBDWW1`). The fix was not deployed or did not take effect.
 
+**Why this matters:** MCPLens is a SaaS product that requires user signup to access paid tiers (Pro, Max, Agency). Without working email, the entire signup funnel is broken — users can't verify their accounts, can't reset passwords, and can't receive rescan alerts. This directly blocks revenue. Every minute this stays broken, potential paying customers are bouncing off a dead signup flow. It also means existing users who forget passwords are locked out with no recovery path.
+
 **Suggested Fix:** The `RESEND_API_KEY` environment variable on Fly.io is either missing, expired, or invalid. Steps:
 1. Check the key: `flyctl secrets list -a mcplens` — verify `RESEND_API_KEY` exists
 2. Go to https://resend.com/api-keys and generate a new key (or verify the existing one)

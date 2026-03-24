@@ -26,6 +26,8 @@ A crafted `--out` value like `'report.html"; rm -rf /; #'` would break out of th
 
 This pattern appears in three separate locations in cli.ts (lines 144-148, 258, 324).
 
+**Why this matters:** The scanner CLI runs on the server triggered by user-submitted domains via `POST /api/scan`. While the `--out` flag is currently set server-side (not directly from user input), this is a latent vulnerability — any future refactor that passes user input to the CLI output path would immediately become exploitable. It's also a liability if MCPLens ever offers a self-hosted or on-premise version where users run the CLI directly. Fixing it now is a 5-minute change that eliminates an entire class of attack permanently.
+
 **Suggested Fix:** Replace `exec()` with `execFile()` which does not use a shell and prevents injection:
 
 ```typescript
