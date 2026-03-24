@@ -51,3 +51,11 @@
 - New deploy image (01KMGXBS8M928PWS5M9WP5Y97T) from master features, not builder fixes.
 - Config audit found 12 issues — root container, cold-start config, missing env vars, image bloat queued for future
 - Site status: up
+
+## Run 2026-03-24 22:15
+- Cycle type: product
+- Phase completed: product (landing page copy + competitive research)
+- Finding: 007 - Landing page assumes store owners know what MCP is
+- Phase 1b: PRs #4 and #5 still open. No new errors in logs.
+- Research: Shopify has 6.9M stores, most not prepared for AI agents. No direct competitor to MCPLens found — market is guides/consulting (wearepresta, ucphub.ai), not scanning tools. MCPLens has first-mover advantage but needs to bridge the knowledge gap for non-technical store owners.
+- Site status: up

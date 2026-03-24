@@ -52,3 +52,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 004 | API v1 scan endpoint bypasses entitlement checks — paid AI features broken for API users | high | verified | scout | 2026-03-24 |
 | 005 | MongoDB duplicate key race condition in distributed rate limiter | medium | pr-open | builder | 2026-03-24 | https://github.com/reesthomas212/mcplens/pull/4 |
 | 006 | Docker container runs as root — no USER directive in Dockerfile.saas | high | pr-open | builder | 2026-03-24 | https://github.com/reesthomas212/mcplens/pull/5 |
+| 007 | Landing page assumes store owners know what MCP is — needs knowledge bridge | high | new | scout | 2026-03-24 |
