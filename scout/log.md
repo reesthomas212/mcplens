@@ -67,3 +67,11 @@
 - Phase 1b: PRs #4 and #5 still open. No errors in logs.
 - Scenarios audit found 16 issues total: hollow checkout scoring, missing inventory test, redundant assertions, aggressive score killers, variant assumption bugs
 - Site status: up
+
+## Run 2026-03-24 22:45
+- Cycle type: product
+- Phase completed: product (scan results conversion flow analysis)
+- Finding: 009 - Free scan results lack "what to do next" — upsells appear before value, broken CTA link
+- Verification: 005 VERIFIED (IsDuplicateKeyError added, no errors in logs). 006 VERIFIED (USER appuser in Dockerfile).
+- Also found: "View Pro Plans" CTA on line 1222 links to /scan instead of /plan (likely a bug)
+- Site status: up
