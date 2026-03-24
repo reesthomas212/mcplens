@@ -21,3 +21,10 @@
 - Verification: 002 VERIFIED — execFile() confirmed in code. 001 still regression (Resend 401 at 20:59:59)
 - Site status: up (deploy v27, new image)
 - Frontend audit found ~15 issues total — will file remaining in future cycles (accessibility, mobile nav, broken /plan link)
+
+## Run 2026-03-24 21:15
+- Phase completed: health + audit (backend-handlers)
+- Finding: 004 - API v1 missing entitlement checks — paid AI features broken for API users
+- 001 still regression (Resend 401 at 21:05, 21:10). Same deploy v27.
+- Site status: up (auto-stopped, health warning during cold start)
+- Backend audit found 10 issues total — SSRF risk, error leakage, race condition queued for future cycles
