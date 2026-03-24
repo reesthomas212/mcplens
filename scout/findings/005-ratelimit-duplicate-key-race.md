@@ -2,7 +2,7 @@
 id: 005
 type: bug
 severity: medium
-status: new
+status: implementing
 found: 2026-03-24
 phase: health
 ---
