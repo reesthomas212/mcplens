@@ -1,6 +1,35 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+function setMetaTag(property: string, content: string) {
+  const selector = `meta[property="${property}"], meta[name="${property}"]`;
+  let el = document.querySelector<HTMLMetaElement>(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    if (property.startsWith('og:') || property.startsWith('fb:')) {
+      el.setAttribute('property', property);
+    } else {
+      el.setAttribute('name', property);
+    }
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
 export default function PrivacyPage() {
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = 'Privacy Policy | MCPLens';
+    setMetaTag('og:title', 'Privacy Policy | MCPLens');
+    setMetaTag('og:description', 'Privacy Policy for MCPLens, the AI agent readiness scanner for Shopify stores.');
+    setMetaTag('og:type', 'website');
+    setMetaTag('twitter:card', 'summary');
+
+    return () => {
+      document.title = prevTitle;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-700">
       {/* Nav */}

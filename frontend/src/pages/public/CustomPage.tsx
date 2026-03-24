@@ -5,6 +5,21 @@ import { brandingApi } from '../../api/client';
 import type { CustomPage as CustomPageType } from '../../types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
+function setMetaTag(property: string, content: string) {
+  const selector = `meta[property="${property}"], meta[name="${property}"]`;
+  let el = document.querySelector<HTMLMetaElement>(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    if (property.startsWith('og:') || property.startsWith('fb:')) {
+      el.setAttribute('property', property);
+    } else {
+      el.setAttribute('name', property);
+    }
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
 export default function CustomPage() {
   const { slug } = useParams<{ slug: string }>();
   const [page, setPage] = useState<CustomPageType | null>(null);
@@ -34,6 +49,13 @@ export default function CustomPage() {
       }
       metaDesc.content = page.metaDescription;
     }
+
+    if (page.title) setMetaTag('og:title', page.title);
+    if (page.metaDescription) setMetaTag('og:description', page.metaDescription);
+    setMetaTag('og:type', 'website');
+    setMetaTag('twitter:card', 'summary');
+    if (page.title) setMetaTag('twitter:title', page.title);
+    if (page.metaDescription) setMetaTag('twitter:description', page.metaDescription);
 
     return () => {
       document.title = prevTitle;
