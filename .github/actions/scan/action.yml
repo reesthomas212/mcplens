@@ -1,0 +1,91 @@
+name: 'MCPLens Scan'
+description: 'Scan a Shopify store for AI agent readiness and fail if score is below threshold'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  domain:
+    description: 'Shopify store domain to scan (e.g., allbirds.com)'
+    required: true
+  fail-under:
+    description: 'Minimum acceptable score (0-100). Action fails if score is below this.'
+    required: false
+    default: '0'
+  api-key:
+    description: 'MCPLens API key for authenticated scans (optional, enables AI features on paid plans)'
+    required: false
+
+outputs:
+  score:
+    description: 'The composite agent readiness score (0-100)'
+    value: ${{ steps.scan.outputs.score }}
+  report-url:
+    description: 'URL to the full scan report on mcplens.dev'
+    value: ${{ steps.scan.outputs.report_url }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run MCPLens scan
+      id: scan
+      shell: bash
+      env:
+        MCPLENS_API_KEY: ${{ inputs.api-key }}
+      run: |
+        DOMAIN="${{ inputs.domain }}"
+        FAIL_UNDER="${{ inputs.fail-under }}"
+
+        echo "::group::MCPLens Scan — $DOMAIN"
+
+        # Use the API if an API key is provided, otherwise use the public endpoint
+        if [ -n "$MCPLENS_API_KEY" ]; then
+          RESULT=$(curl -sf "https://mcplens.dev/api/v1/scan" \
+            -H "Authorization: Bearer $MCPLENS_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"domain\": \"$DOMAIN\"}")
+        else
+          # Try cached result first, then trigger fresh scan
+          RESULT=$(curl -sf "https://mcplens.dev/api/scan/domain/$DOMAIN" 2>/dev/null)
+          if [ -z "$RESULT" ] || [ "$RESULT" = "null" ]; then
+            RESULT=$(curl -sf "https://mcplens.dev/api/scan" \
+              -H "Content-Type: application/json" \
+              -d "{\"domain\": \"$DOMAIN\"}")
+          fi
+        fi
+
+        if [ -z "$RESULT" ]; then
+          echo "::error::MCPLens scan failed — no response from API"
+          exit 1
+        fi
+
+        SCORE=$(echo "$RESULT" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); console.log(d.compositeScore || 0)")
+        REPORT_URL="https://mcplens.dev/scan/$DOMAIN"
+
+        echo "score=$SCORE" >> $GITHUB_OUTPUT
+        echo "report_url=$REPORT_URL" >> $GITHUB_OUTPUT
+
+        echo "## MCPLens Agent Readiness Score" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| **Domain** | \`$DOMAIN\` |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Score** | **$SCORE**/100 |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Threshold** | $FAIL_UNDER |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Report** | [View Full Report]($REPORT_URL) |" >> $GITHUB_STEP_SUMMARY
+
+        echo "::endgroup::"
+
+        echo "Score: $SCORE / Threshold: $FAIL_UNDER"
+
+        if [ "$FAIL_UNDER" -gt 0 ] && [ "$SCORE" -lt "$FAIL_UNDER" ]; then
+          echo "::error::MCPLens score $SCORE is below threshold $FAIL_UNDER — see $REPORT_URL"
+          exit 1
+        fi
+
+        echo "MCPLens scan passed — score $SCORE >= threshold $FAIL_UNDER"

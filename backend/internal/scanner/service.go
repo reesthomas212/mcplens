@@ -20,6 +20,7 @@ import (
 type Service struct {
 	store        *Store
 	trackedStore *TrackedStoreStore
+	benchmarks   *BenchmarkService
 	scannerPath  string // path to the scanner dist directory (containing cli.js)
 }
 
@@ -32,6 +33,7 @@ func NewService(database *mongo.Database) *Service {
 	return &Service{
 		store:        NewStore(database),
 		trackedStore: NewTrackedStoreStore(database),
+		benchmarks:   NewBenchmarkService(database.Collection(collectionName)),
 		scannerPath:  scannerPath,
 	}
 }
@@ -39,6 +41,11 @@ func NewService(database *mongo.Database) *Service {
 // TrackedStores returns the TrackedStoreStore for use by handlers.
 func (s *Service) TrackedStores() *TrackedStoreStore {
 	return s.trackedStore
+}
+
+// Benchmarks returns the BenchmarkService for percentile lookups.
+func (s *Service) Benchmarks() *BenchmarkService {
+	return s.benchmarks
 }
 
 // resolveScanner resolves the path to scanner/dist relative to the binary,

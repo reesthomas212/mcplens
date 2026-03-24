@@ -996,6 +996,37 @@ export default function ScanResultPage() {
               </div>
             </div>
 
+            {/* Benchmark */}
+            {result.benchmark && (
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 flex flex-col sm:flex-row items-center gap-6">
+                <div className="text-center sm:text-left flex-1">
+                  <div className="text-sm font-semibold text-slate-400 uppercase tracking-widest mb-2">Market Benchmark</div>
+                  <div className="text-2xl font-bold text-slate-900">
+                    Top {100 - result.benchmark.percentile}%
+                  </div>
+                  <p className="text-sm text-slate-500 mt-1">
+                    of {result.benchmark.totalStoresScanned.toLocaleString()} Shopify stores scanned on MCPLens
+                  </p>
+                </div>
+                <div className="flex gap-6 text-center">
+                  <div>
+                    <div className="text-lg font-bold text-slate-900">{result.benchmark.averageScore}</div>
+                    <div className="text-xs text-slate-400">Avg Score</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold" style={{ color: scoreColor(result.compositeScore) }}>{result.compositeScore}</div>
+                    <div className="text-xs text-slate-400">Your Score</div>
+                  </div>
+                  <div>
+                    <div className={`text-lg font-bold ${result.compositeScore > result.benchmark.averageScore ? 'text-emerald-600' : 'text-red-600'}`}>
+                      {result.compositeScore > result.benchmark.averageScore ? '+' : ''}{result.compositeScore - result.benchmark.averageScore}
+                    </div>
+                    <div className="text-xs text-slate-400">vs Avg</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Score Cap Alerts */}
             {categoriesWithKillers.length > 0 && (
               <div className="flex flex-col gap-3">

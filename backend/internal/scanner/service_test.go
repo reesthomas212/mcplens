@@ -125,3 +125,59 @@ func TestComparisonSeriesStructure(t *testing.T) {
 		t.Errorf("label = %q, want 'My Store'", series.Label)
 	}
 }
+
+func TestComputePercentile(t *testing.T) {
+	scores := []int{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}
+
+	tests := []struct {
+		score    int
+		expected int
+	}{
+		{100, 90},  // beats 9 out of 10
+		{50, 40},   // beats 4 out of 10
+		{10, 0},    // beats 0 out of 10
+		{55, 50},   // beats 5 out of 10 (between 50 and 60)
+		{0, 0},     // below all
+		{110, 100}, // above all
+	}
+
+	for _, tt := range tests {
+		got := computePercentile(scores, tt.score)
+		if got != tt.expected {
+			t.Errorf("computePercentile(scores, %d) = %d, want %d", tt.score, got, tt.expected)
+		}
+	}
+}
+
+func TestComputePercentileEmpty(t *testing.T) {
+	got := computePercentile([]int{}, 50)
+	if got != 50 {
+		t.Errorf("computePercentile(empty, 50) = %d, want 50", got)
+	}
+}
+
+func TestBenchmarkDataStructure(t *testing.T) {
+	data := BenchmarkData{
+		TotalStoresScanned: 100,
+		Percentiles:        []int{20, 35, 55, 75, 90},
+		AverageScore:       58,
+		MedianScore:        55,
+	}
+	if data.TotalStoresScanned != 100 {
+		t.Errorf("TotalStoresScanned = %d, want 100", data.TotalStoresScanned)
+	}
+	if len(data.Percentiles) != 5 {
+		t.Errorf("Percentiles length = %d, want 5", len(data.Percentiles))
+	}
+}
+
+func TestBenchmarkResultStructure(t *testing.T) {
+	result := BenchmarkResult{
+		Percentile:         72,
+		TotalStoresScanned: 500,
+		AverageScore:       58,
+	}
+	if result.Percentile != 72 {
+		t.Errorf("Percentile = %d, want 72", result.Percentile)
+	}
+}

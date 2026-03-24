@@ -159,6 +159,7 @@ func setupTestServer(t *testing.T) *testEnv {
 	guarded.HandleFunc("/scan", scannerHandler.TriggerScan).Methods("POST")
 	guarded.HandleFunc("/scan/{id}", scannerHandler.GetScan).Methods("GET")
 	guarded.HandleFunc("/scan/domain/{domain}", scannerHandler.GetLatestDomainScan).Methods("GET")
+	guarded.HandleFunc("/benchmarks", scannerHandler.GetBenchmarks).Methods("GET")
 
 	// Tracked stores routes (authenticated + tenant)
 	trackedAPI := guarded.PathPrefix("/tracked-stores").Subrouter()

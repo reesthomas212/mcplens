@@ -70,7 +70,7 @@ func (h *ScannerHandler) TriggerScan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, stored)
+	respondWithJSON(w, http.StatusOK, h.withBenchmark(ctx, stored))
 }
 
 // GetScan handles GET /api/scan/{id}.
@@ -92,7 +92,7 @@ func (h *ScannerHandler) GetScan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, scan)
+	respondWithJSON(w, http.StatusOK, h.withBenchmark(r.Context(), scan))
 }
 
 // GetLatestDomainScan handles GET /api/scan/domain/{domain}.
@@ -114,7 +114,7 @@ func (h *ScannerHandler) GetLatestDomainScan(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, scan)
+	respondWithJSON(w, http.StatusOK, h.withBenchmark(r.Context(), scan))
 }
 
 // ListScans handles GET /api/scans.
@@ -418,4 +418,35 @@ func (h *ScannerHandler) GetTrackedStoreHistory(w http.ResponseWriter, r *http.R
 		"store":   store,
 		"history": history,
 	})
+}
+
+// withBenchmark wraps a StoredScan with benchmark data if available.
+func (h *ScannerHandler) withBenchmark(ctx context.Context, scan *scanner.StoredScan) interface{} {
+	bench, err := h.service.Benchmarks().GetBenchmark(ctx, scan.CompositeScore)
+	if err != nil || bench == nil {
+		return scan // return scan without benchmark if unavailable
+	}
+	// Return both scan and benchmark as a combined response
+	return struct {
+		*scanner.StoredScan
+		Benchmark *scanner.BenchmarkResult `json:"benchmark"`
+	}{scan, bench}
+}
+
+// GetBenchmarks handles GET /api/benchmarks.
+// Returns aggregate ecosystem benchmark data (public, no auth).
+func (h *ScannerHandler) GetBenchmarks(w http.ResponseWriter, r *http.Request) {
+	data, err := h.service.Benchmarks().GetAggregateData(r.Context())
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to retrieve benchmarks")
+		return
+	}
+	if data == nil {
+		respondWithJSON(w, http.StatusOK, map[string]interface{}{
+			"message": "Not enough data yet",
+			"totalStoresScanned": 0,
+		})
+		return
+	}
+	respondWithJSON(w, http.StatusOK, data)
 }

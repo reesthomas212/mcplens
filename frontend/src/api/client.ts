@@ -628,6 +628,12 @@ export interface AgentSimulation {
   durationMs: number;
 }
 
+export interface BenchmarkResult {
+  percentile: number;
+  totalStoresScanned: number;
+  averageScore: number;
+}
+
 export interface ScanResult {
   serverIdentifier: string;
   timestamp: number;
@@ -642,6 +648,7 @@ export interface ScanResult {
   testedCategories: string[];
   aiAssessment?: AIAssessment;
   agentSimulation?: AgentSimulation;
+  benchmark?: BenchmarkResult;
 }
 
 // --- My Scans (authenticated, tenant-scoped) ---

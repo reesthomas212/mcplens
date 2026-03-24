@@ -686,6 +686,9 @@ func main() {
 	// GET /api/badge/{domain} — public, returns shields.io-compatible JSON
 	api.HandleFunc("/badge/{domain}", ogHandler.Badge).Methods("GET")
 
+	// GET /api/benchmarks — public, returns aggregate ecosystem benchmark data
+	api.HandleFunc("/benchmarks", scannerHandler.GetBenchmarks).Methods("GET")
+
 	// --- Lead capture routes (public, rate-limited) ---
 	api.HandleFunc("/leads", rateLimiter.RateLimitHandler(
 		middleware.ScanPublicLimit,
