@@ -164,27 +164,23 @@ func NewStripeChecker() IntegrationChecker {
 	}
 }
 
-// NewResendChecker returns a checker that verifies the Resend API key is configured
-// and the Resend API is reachable. Sending-access keys cannot call read endpoints
-// (domains, api-keys), so we only verify the key is present and the host responds.
+// NewResendChecker returns a checker that hits the Resend domains endpoint.
 func NewResendChecker(apiKey string) IntegrationChecker {
 	return func(ctx context.Context) error {
-		if apiKey == "" || len(apiKey) < 10 {
-			return fmt.Errorf("resend API key not configured")
-		}
-		// Just check that api.resend.com is reachable — we can't validate
-		// sending-access keys without actually sending an email.
-		req, err := http.NewRequestWithContext(ctx, "HEAD", "https://api.resend.com", nil)
+		req, err := http.NewRequestWithContext(ctx, "GET", "https://api.resend.com/domains", nil)
 		if err != nil {
 			return err
 		}
+		req.Header.Set("Authorization", "Bearer "+apiKey)
 		resp, err := healthCheckClient.Do(req)
 		if err != nil {
-			return fmt.Errorf("resend API unreachable: %w", err)
+			return err
 		}
 		io.Copy(io.Discard, resp.Body)
 		resp.Body.Close()
-		// Any response means the service is up — we can't auth-check a sending key
+		if resp.StatusCode >= 400 {
+			return fmt.Errorf("resend API returned status %d", resp.StatusCode)
+		}
 		return nil
 	}
 }
