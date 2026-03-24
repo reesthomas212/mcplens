@@ -635,6 +635,7 @@ export interface BenchmarkResult {
 }
 
 export interface ScanResult {
+  id?: string;
   serverIdentifier: string;
   timestamp: number;
   durationMs: number;

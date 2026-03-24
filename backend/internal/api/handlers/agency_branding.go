@@ -12,6 +12,7 @@ import (
 	"lastsaas/internal/models"
 	"lastsaas/internal/scanner"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -136,6 +137,125 @@ func (h *AgencyBrandingHandler) UpdateAgencyBranding(w http.ResponseWriter, r *h
 	}
 
 	respondWithJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+// CustomScenario stores a user-defined YAML test scenario for an Agency tenant.
+type CustomScenario struct {
+	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	TenantID  primitive.ObjectID `json:"tenantId" bson:"tenantId"`
+	Name      string             `json:"name" bson:"name"`
+	YAML      string             `json:"yaml" bson:"yaml"`
+	CreatedAt time.Time          `json:"createdAt" bson:"createdAt"`
+	UpdatedAt time.Time          `json:"updatedAt" bson:"updatedAt"`
+}
+
+// ListCustomScenarios handles GET /api/scenarios.
+func (h *AgencyBrandingHandler) ListCustomScenarios(w http.ResponseWriter, r *http.Request) {
+	tenant, ok := middleware.GetTenantFromContext(r.Context())
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Tenant context required")
+		return
+	}
+	if !h.hasAgencyBranding(r, tenant) {
+		respondWithError(w, http.StatusPaymentRequired, "Custom scenarios require an Agency plan.")
+		return
+	}
+
+	cursor, err := h.db.Database.Collection("custom_scenarios").Find(r.Context(),
+		bson.M{"tenantId": tenant.ID},
+		options.Find().SetSort(bson.D{{Key: "createdAt", Value: -1}}),
+	)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to list scenarios")
+		return
+	}
+	defer cursor.Close(r.Context())
+
+	var scenarios []CustomScenario
+	if err := cursor.All(r.Context(), &scenarios); err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to decode scenarios")
+		return
+	}
+	if scenarios == nil {
+		scenarios = []CustomScenario{}
+	}
+	respondWithJSON(w, http.StatusOK, map[string]interface{}{"scenarios": scenarios})
+}
+
+// CreateCustomScenario handles POST /api/scenarios.
+func (h *AgencyBrandingHandler) CreateCustomScenario(w http.ResponseWriter, r *http.Request) {
+	tenant, ok := middleware.GetTenantFromContext(r.Context())
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Tenant context required")
+		return
+	}
+	if !h.hasAgencyBranding(r, tenant) {
+		respondWithError(w, http.StatusPaymentRequired, "Custom scenarios require an Agency plan.")
+		return
+	}
+
+	var req struct {
+		Name string `json:"name"`
+		YAML string `json:"yaml"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request body")
+		return
+	}
+	if req.Name == "" || req.YAML == "" {
+		respondWithError(w, http.StatusBadRequest, "name and yaml are required")
+		return
+	}
+
+	// Limit to 20 custom scenarios per tenant
+	count, _ := h.db.Database.Collection("custom_scenarios").CountDocuments(r.Context(), bson.M{"tenantId": tenant.ID})
+	if count >= 20 {
+		respondWithError(w, http.StatusBadRequest, "Maximum 20 custom scenarios allowed")
+		return
+	}
+
+	now := time.Now().UTC()
+	scenario := CustomScenario{
+		ID:        primitive.NewObjectID(),
+		TenantID:  tenant.ID,
+		Name:      req.Name,
+		YAML:      req.YAML,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	_, err := h.db.Database.Collection("custom_scenarios").InsertOne(r.Context(), scenario)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to create scenario")
+		return
+	}
+	respondWithJSON(w, http.StatusCreated, scenario)
+}
+
+// DeleteCustomScenario handles DELETE /api/scenarios/{id}.
+func (h *AgencyBrandingHandler) DeleteCustomScenario(w http.ResponseWriter, r *http.Request) {
+	tenant, ok := middleware.GetTenantFromContext(r.Context())
+	if !ok {
+		respondWithError(w, http.StatusBadRequest, "Tenant context required")
+		return
+	}
+
+	vars := mux.Vars(r)
+	id, err := primitive.ObjectIDFromHex(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid scenario ID")
+		return
+	}
+
+	res, err := h.db.Database.Collection("custom_scenarios").DeleteOne(r.Context(), bson.M{"_id": id, "tenantId": tenant.ID})
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to delete scenario")
+		return
+	}
+	if res.DeletedCount == 0 {
+		respondWithError(w, http.StatusNotFound, "Scenario not found")
+		return
+	}
+	respondWithJSON(w, http.StatusOK, map[string]string{"status": "deleted"})
 }
 
 // GetScanReport handles GET /api/scan/{id}/report.

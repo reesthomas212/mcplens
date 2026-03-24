@@ -69,6 +69,7 @@ import TermsPage from './pages/public/TermsPage';
 import PrivacyPage from './pages/public/PrivacyPage';
 import LeaderboardPage from './pages/public/LeaderboardPage';
 import EcosystemReportPage from './pages/public/EcosystemReportPage';
+import ComparePage from './pages/public/ComparePage';
 
 function LazyFallback() {
   return (
@@ -155,6 +156,7 @@ export default function App() {
                     {/* Legal pages */}
                     <Route path="/leaderboard" element={<LeaderboardPage />} />
                     <Route path="/report" element={<EcosystemReportPage />} />
+                    <Route path="/compare" element={<ComparePage />} />
                     <Route path="/terms" element={<TermsPage />} />
                     <Route path="/privacy" element={<PrivacyPage />} />
 

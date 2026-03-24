@@ -7,24 +7,29 @@ import SecurityTab from './settings/SecurityTab';
 import SessionsTab from './settings/SessionsTab';
 import BillingTab from './settings/BillingTab';
 import NotificationsTab from './settings/NotificationsTab';
+import WhiteLabelTab from './settings/WhiteLabelTab';
+import { usePlan } from '../../contexts/PlanContext';
 
 export default function SettingsPage() {
   const { user } = useAuth();
   const { branding } = useBranding();
+  const { hasEntitlement } = usePlan();
   const passkeysEnabled = branding?.authProviders?.passkeys ?? false;
   const mfaConfigEnabled = branding?.authProviders?.mfa ?? false;
   const showMfaSection = mfaConfigEnabled || user?.totpEnabled;
   const showSecurityTab = passkeysEnabled || showMfaSection;
+  const showWhiteLabel = hasEntitlement('agency_branding');
 
   const tabs = useMemo(() => [
     { key: 'profile' as const, label: 'Profile' },
     ...(showSecurityTab ? [{ key: 'security' as const, label: 'Security' }] : []),
     { key: 'notifications' as const, label: 'Notifications' },
+    ...(showWhiteLabel ? [{ key: 'whitelabel' as const, label: 'White-Label' }] : []),
     { key: 'sessions' as const, label: 'Sessions' },
     { key: 'billing' as const, label: 'Billing' },
-  ], [showSecurityTab]);
+  ], [showSecurityTab, showWhiteLabel]);
 
-  const [tab, setTab] = useState<'profile' | 'security' | 'notifications' | 'sessions' | 'billing'>('profile');
+  const [tab, setTab] = useState<'profile' | 'security' | 'notifications' | 'whitelabel' | 'sessions' | 'billing'>('profile');
 
   return (
     <div>
@@ -56,6 +61,7 @@ export default function SettingsPage() {
       {tab === 'profile' && <ProfileTab />}
       {tab === 'security' && <SecurityTab />}
       {tab === 'notifications' && <NotificationsTab />}
+      {tab === 'whitelabel' && <WhiteLabelTab />}
       {tab === 'sessions' && <SessionsTab />}
       {tab === 'billing' && <BillingTab />}
     </div>

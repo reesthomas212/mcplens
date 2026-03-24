@@ -661,6 +661,14 @@ func main() {
 	agencyBrandingAPI.HandleFunc("", agencyBrandingHandler.GetAgencyBranding).Methods("GET")
 	agencyBrandingAPI.HandleFunc("", agencyBrandingHandler.UpdateAgencyBranding).Methods("PUT")
 
+	// Custom scenarios (Agency tier)
+	scenarioAPI := guarded.PathPrefix("/scenarios").Subrouter()
+	scenarioAPI.Use(authMiddleware.RequireAuth)
+	scenarioAPI.Use(tenantMiddleware.RequireTenant)
+	scenarioAPI.HandleFunc("", agencyBrandingHandler.ListCustomScenarios).Methods("GET")
+	scenarioAPI.HandleFunc("", agencyBrandingHandler.CreateCustomScenario).Methods("POST")
+	scenarioAPI.HandleFunc("/{id}", agencyBrandingHandler.DeleteCustomScenario).Methods("DELETE")
+
 	// Scan report download (public; branding applied when ?branding=true + tenant auth)
 	api.HandleFunc("/scan/{id}/report", agencyBrandingHandler.GetScanReport).Methods("GET")
 
