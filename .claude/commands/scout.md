@@ -22,6 +22,21 @@ Also check:
 
 If the site is DOWN → create an urgent finding and stop. Do not proceed to other phases.
 
+## Phase 1b — PR & Deployment Verification (runs every cycle)
+
+Check all findings in HANDOFF.md with status `pr-open`, `done`, or `implementing`:
+
+1. **For `pr-open` findings:** Run `gh pr list --repo reesthomas212/mcplens` and `gh pr view <number> --json state,mergedAt,mergeCommit` to check:
+   - Is the PR still open, merged, or closed?
+   - If merged → check `flyctl status -a mcplens` to see if the deploy image changed since the PR was merged
+   - If merged AND deployed → verify the fix on the live site (check logs, fetch pages, grep source). Update to `verified` or `regression`.
+   - If merged but NOT deployed → update status to `done` and note "awaiting deploy" in the finding file
+   - If PR was closed without merging → update status back to `new` and note the rejection reason
+2. **For `done` findings:** Verify the fix is live (same as before — check logs, fetch pages, confirm behavior). Update to `verified` or `regression`.
+3. **For `implementing` findings:** Check if a branch exists (`gh pr list --head fix/{id}-*`). If a PR was opened but HANDOFF.md wasn't updated, update it to `pr-open`.
+
+Record all verification results in the log.
+
 ## Phase 2 — Functional Crawl (if site is up)
 
 Test these flows by fetching pages and analyzing content:

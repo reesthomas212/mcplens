@@ -28,3 +28,10 @@
 - 001 still regression (Resend 401 at 21:05, 21:10). Same deploy v27.
 - Site status: up (auto-stopped, health warning during cold start)
 - Backend audit found 10 issues total — SSRF risk, error leakage, race condition queued for future cycles
+
+## Run 2026-03-24 21:30 (Phase 1b — PR verification)
+- PR #2 (Finding 003, OG tags): MERGED at 21:22, deployed (new image 01KMGW2E7M5FJV9FJDF2H3KH41). Code verified — og:title present in ScanPage, TermsPage, PrivacyPage. → `verified`
+- PR #3 (Finding 004, API entitlements): OPEN, still in review
+- Finding 001 (Resend 401): Last 401 at 21:26:29, subsequent startups (21:29, 21:31) show NO Resend errors. Appears fixed — likely secret was updated. → `verified`
+- Finding 002: Previously verified, no change
+- Site status: up (deploy v28+, new image after PR #2 merge)
