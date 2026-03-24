@@ -48,4 +48,4 @@ This file is the coordination protocol between three Claude Code instances:
 |----|---------|----------|--------|-------|---------|
 | 001 | Resend email API returning 401 — all transactional emails broken | high | regression | scout | 2026-03-24 |
 | 002 | Command injection vulnerability in scanner CLI exec() calls | critical | verified | scout | 2026-03-24 |
-| 003 | Missing meta/OG tags on ScanPage, TermsPage, PrivacyPage, CustomPage | medium | implementing | builder | 2026-03-24 |
+| 003 | Missing meta/OG tags on ScanPage, TermsPage, PrivacyPage, CustomPage | medium | pr-open | builder | 2026-03-24 | https://github.com/reesthomas212/mcplens/pull/2 |
