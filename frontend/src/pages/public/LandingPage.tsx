@@ -73,6 +73,7 @@ export default function LandingPage() {
           <nav className="hidden sm:flex items-center gap-6">
             <Link to="/how-it-works" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">How It Works</Link>
             <Link to="/leaderboard" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Leaderboard</Link>
+            <Link to="/report" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Ecosystem Report</Link>
             <Link to="/pricing" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Pricing</Link>
             <Link to="/login" className="text-sm text-slate-500 hover:text-slate-900 transition-colors">Sign in</Link>
             <Link to="/scan" className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-full transition-colors">
