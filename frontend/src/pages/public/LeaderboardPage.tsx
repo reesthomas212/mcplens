@@ -101,12 +101,20 @@ export default function LeaderboardPage() {
           <p className="text-sm text-slate-400 mb-4">
             Don't see your store? Scan it now and claim your spot.
           </p>
-          <Link
-            to="/scan"
-            className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full transition-colors text-sm"
-          >
-            Scan Your Store
-          </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              to="/scan"
+              className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full transition-colors text-sm"
+            >
+              Scan Your Store
+            </Link>
+            <Link
+              to="/report"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+            >
+              View Ecosystem Report
+            </Link>
+          </div>
         </div>
       </main>
 
