@@ -2,7 +2,7 @@
 id: 012
 type: bug
 severity: high
-status: new
+status: implementing
 found: 2026-03-25
 phase: audit
 ---
