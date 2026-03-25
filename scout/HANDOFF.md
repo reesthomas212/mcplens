@@ -60,3 +60,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | done | master | 2026-03-25 |
 | 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | deferred | master | 2026-03-25 |
 | 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | implementing | builder | 2026-03-25 |
+| 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | new | scout | 2026-03-25 |

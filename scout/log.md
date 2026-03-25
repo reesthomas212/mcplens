@@ -111,6 +111,14 @@
 - PR #10 (chart crash) still open
 - Site status: up
 
+## Run 2026-03-25 03:45
+- Cycle type: product
+- Phase completed: product (onboarding flow analysis)
+- Finding: 015 - Onboarding skips first scan — empty dashboard after signup
+- Onboarding is profile → team invite → empty dashboard. Never prompts user to add their store or run a scan. The signup intent (track my 47/100 score) is disconnected from the paid experience.
+- PR #10 still open. Clean logs.
+- Site status: up
+
 ## Run 2026-03-25 03:15
 - Cycle type: product
 - Phase completed: product (market research + scan results value alignment)
