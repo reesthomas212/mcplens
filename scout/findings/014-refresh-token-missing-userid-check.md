@@ -2,7 +2,7 @@
 id: 014
 type: security
 severity: medium
-status: new
+status: implementing
 found: 2026-03-25
 phase: audit
 ---

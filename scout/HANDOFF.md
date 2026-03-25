@@ -59,4 +59,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | verified | scout | 2026-03-25 |
 | 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/10 |
 | 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | deferred | master | 2026-03-25 |
-| 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | new | scout | 2026-03-25 |
+| 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | implementing | builder | 2026-03-25 |
