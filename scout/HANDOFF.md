@@ -70,8 +70,8 @@ This file is the coordination protocol between three Claude Code instances:
 | 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | deferred | master | 2026-03-25 |
 | 016 | Benchmark service debug logging runs in production every 15 min | medium | done | master | 2026-03-25 |
 | 017 | CI/CD integration is a paid selling point but has zero documentation | high | deferred | master | 2026-03-25 |
-| 018 | Slack webhook URL not validated — SSRF via notification preferences | high | done | master | 2026-03-25 |
+| 018 | Slack webhook URL not validated — SSRF via notification preferences | high | verified | scout | 2026-03-25 |
 | 019 | Leaderboard publishes store scores publicly without owner consent | high | deferred | master | 2026-03-25 |
-| 020 | Batch scan script hits production without auth or self-rate-limiting | medium | done | master | 2026-03-25 |
+| 020 | Batch scan script hits production without auth or self-rate-limiting | medium | verified | scout | 2026-03-25 |
 | 021 | Ecosystem Report page is built but orphaned — no links point to it | medium | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/14 |
 | 022 | No robots.txt, sitemap.xml, or favicon — basic SEO infrastructure missing | medium | implementing | builder | 2026-03-25 |
