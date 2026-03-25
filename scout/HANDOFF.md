@@ -74,3 +74,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 019 | Leaderboard publishes store scores publicly without owner consent | high | deferred | master | 2026-03-25 |
 | 020 | Batch scan script hits production without auth or self-rate-limiting | medium | done | master | 2026-03-25 |
 | 021 | Ecosystem Report page is built but orphaned — no links point to it | medium | new | scout | 2026-03-25 |
+| 022 | No robots.txt, sitemap.xml, or favicon — basic SEO infrastructure missing | medium | new | scout | 2026-03-25 |
