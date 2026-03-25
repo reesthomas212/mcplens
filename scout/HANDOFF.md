@@ -72,4 +72,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 017 | CI/CD integration is a paid selling point but has zero documentation | high | deferred | master | 2026-03-25 |
 | 018 | Slack webhook URL not validated — SSRF via notification preferences | high | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/12 |
 | 019 | Leaderboard publishes store scores publicly without owner consent | high | deferred | master | 2026-03-25 |
-| 020 | Batch scan script hits production without auth or self-rate-limiting | medium | new | scout | 2026-03-25 |
+| 020 | Batch scan script hits production without auth or self-rate-limiting | medium | implementing | builder | 2026-03-25 |
