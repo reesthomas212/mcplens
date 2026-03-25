@@ -120,6 +120,14 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 06:15
+- Cycle type: product
+- Phase completed: product (Shopify MCP spec research + gap analysis)
+- Finding: 023 - MCPLens doesn't test Shopify's policies/FAQ tool (4th of 4 MCP tools)
+- Verification: 021 VERIFIED (report linked from landing nav, mobile nav, footer, leaderboard). 022 VERIFIED (robots.txt, sitemap.xml, favicon.svg all correct).
+- Research: Shopify's Storefront MCP has exactly 4 tools. MCPLens tests 3 but ignores search_shop_policies_and_faqs — how AI agents answer "what's your return policy?" questions.
+- 18 findings now verified. Site status: up, clean logs.
+
 ## Run 2026-03-25 06:00
 - Cycle type: code
 - Phase completed: verification (backend-handlers)
