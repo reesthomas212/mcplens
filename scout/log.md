@@ -120,6 +120,14 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 06:30
+- Cycle type: code
+- Phase completed: audit (backend-scanner — tracked_store + agency_branding)
+- Finding: No new finding — codebase mature, reviewed tracked_store.go and agency_branding.go
+- Noted: accentColor in agency branding report is injected into CSS without validation (line 299) — low severity, Agency plan only, affects downloaded HTML reports only
+- Noted: AddTrackedStore calls sanitiseDomain but not validateDomain — but ScanStore (called by rescan) does validate, so no actual SSRF
+- 18 findings verified. Site status: up, clean logs.
+
 ## Run 2026-03-25 06:15
 - Cycle type: product
 - Phase completed: product (Shopify MCP spec research + gap analysis)
