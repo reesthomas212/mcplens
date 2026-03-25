@@ -1,7 +1,7 @@
 {
   "finding_counter": 28,
-  "last_run": "2026-03-25T11:00:00Z",
-  "last_git_sha": "10727e3",
+  "last_run": "2026-03-25T11:15:00Z",
+  "last_git_sha": "2ba04ce",
   "last_crawl": {
     "mcplens.dev": "up",
     "mcplens.dev/scan": "up",
@@ -9,5 +9,5 @@
   },
   "verified_findings": ["001", "002", "003", "004", "005", "006", "008", "009", "010", "011", "012", "013", "014", "016", "018", "020", "021", "023", "027"],
   "phase_rotation": "scanner",
-  "cycle_type": "code"
+  "cycle_type": "product"
 }
