@@ -79,4 +79,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 024 | 32% of stores get 100/100 — perfect scores kill the conversion funnel | high | deferred | master | 2026-03-25 |
 | 025 | UCP (Universal Commerce Protocol) launched — MCPLens doesn't test or mention it | medium | deferred | master | 2026-03-25 |
 | 026 | At least 4 competitors launched — first-mover window closing | high | deferred | master | 2026-03-25 |
-| 027 | GitHub Action has script injection vulnerability via domain input | high | new | scout | 2026-03-25 |
+| 027 | GitHub Action has script injection vulnerability via domain input | high | implementing | builder | 2026-03-25 |
