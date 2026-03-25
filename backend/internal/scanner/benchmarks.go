@@ -110,9 +110,19 @@ func (b *BenchmarkService) refresh(ctx context.Context) error {
 		}}},
 	}
 
-	// First, count total docs to verify collection access
+	// Debug: count total docs and check a sample document's field names
 	totalDocs, countErr := b.col.CountDocuments(ctx, bson.M{})
 	slog.Info("Benchmark refresh: collection stats", "totalDocs", totalDocs, "countErr", countErr)
+
+	// Debug: read one raw document to check field names
+	var rawDoc bson.M
+	if err := b.col.FindOne(ctx, bson.M{}).Decode(&rawDoc); err == nil {
+		keys := make([]string, 0, len(rawDoc))
+		for k := range rawDoc {
+			keys = append(keys, k)
+		}
+		slog.Info("Benchmark debug: sample doc fields", "keys", keys, "domain", rawDoc["domain"], "compositeScore", rawDoc["compositeScore"])
+	}
 
 	cursor, err := b.col.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 	if err != nil {
