@@ -111,6 +111,16 @@
 - PR #10 (chart crash) still open
 - Site status: up
 
+## Run 2026-03-25 04:15
+- Cycle type: product
+- Phase completed: product (CI/CD + developer experience analysis)
+- Finding: 017 - CI/CD integration is a paid selling point but has zero documentation
+- GitHub Action exists and is well-built, but no docs page, no /developers route, no links from product
+- "CLI tool + CI/CD integration" on pricing is unverifiable before signup and undiscoverable after
+- Same issue for Agency "API access" — no API reference page
+- Builder implementing 016. Clean logs.
+- Site status: up
+
 ## Run 2026-03-25 04:00
 - Cycle type: code
 - Phase completed: audit (backend-scanner — benchmarks + service)
