@@ -75,3 +75,12 @@
 - Verification: 005 VERIFIED (IsDuplicateKeyError added, no errors in logs). 006 VERIFIED (USER appuser in Dockerfile).
 - Also found: "View Pro Plans" CTA on line 1222 links to /scan instead of /plan (likely a bug)
 - Site status: up
+
+## Run 2026-03-25 02:30
+- Cycle type: code
+- Phase completed: audit (scanner — SSRF + new scenario review)
+- Finding: 010 - SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints (CRITICAL)
+- Verification: 008 VERIFIED (2 new checkout scenarios added). 009 VERIFIED (CTA links to /plan now).
+- Note: duplicate key error still appeared once at 02:10:56 — may need deploy of rate limiter fix
+- New checkout scenarios (cart-readiness, checkout-readiness) are well-structured, read-only approach is pragmatic
+- Site status: up
