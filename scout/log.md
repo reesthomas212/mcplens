@@ -120,6 +120,13 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 05:00
+- Cycle type: code
+- Phase completed: audit (scanner/scripts + verification)
+- Finding: 020 - Batch scan script hits production without auth or rate protection
+- Verification: 016 VERIFIED (debug logging gone). Finding 013 (Shopify guidance) implemented by master.
+- 13 findings verified. Site status: up
+
 ## Run 2026-03-25 04:30
 - Cycle type: code
 - Phase completed: audit (rescan service — backend-scanner/config rotation)

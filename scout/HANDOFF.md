@@ -68,7 +68,8 @@ This file is the coordination protocol between three Claude Code instances:
 | 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | deferred | master | 2026-03-25 |
 | 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | verified | scout | 2026-03-25 |
 | 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | deferred | master | 2026-03-25 |
-| 016 | Benchmark service debug logging runs in production every 15 min | medium | done | master | 2026-03-25 |
+| 016 | Benchmark service debug logging runs in production every 15 min | medium | verified | scout | 2026-03-25 |
 | 017 | CI/CD integration is a paid selling point but has zero documentation | high | deferred | master | 2026-03-25 |
 | 018 | Slack webhook URL not validated — SSRF via notification preferences | high | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/12 |
 | 019 | Leaderboard publishes store scores publicly without owner consent | high | deferred | master | 2026-03-25 |
+| 020 | Batch scan script hits production without auth or self-rate-limiting | medium | new | scout | 2026-03-25 |
