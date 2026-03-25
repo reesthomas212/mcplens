@@ -2,7 +2,7 @@
 id: 022
 type: ux
 severity: medium
-status: new
+status: implementing
 found: 2026-03-25
 phase: product
 ---
