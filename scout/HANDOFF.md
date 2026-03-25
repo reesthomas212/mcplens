@@ -76,3 +76,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 021 | Ecosystem Report page is built but orphaned — no links point to it | medium | verified | scout | 2026-03-25 |
 | 022 | No robots.txt, sitemap.xml, or favicon — basic SEO infrastructure missing | medium | verified | scout | 2026-03-25 |
 | 023 | MCPLens doesn't test policies/FAQ tool — Shopify's 4th MCP capability untested | high | done | master | 2026-03-25 |
+| 024 | 32% of stores get 100/100 — perfect scores kill the conversion funnel | high | new | scout | 2026-03-25 |
