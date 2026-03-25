@@ -84,3 +84,12 @@
 - Note: duplicate key error still appeared once at 02:10:56 — may need deploy of rate limiter fix
 - New checkout scenarios (cart-readiness, checkout-readiness) are well-structured, read-only approach is pragmatic
 - Site status: up
+
+## Run 2026-03-25 02:45
+- Cycle type: product
+- Phase completed: product (pricing page + revenue calculator analysis)
+- Finding: 011 - Revenue Calculator AOV slider has no effect on output
+- New pages detected: PricingPage.tsx, HowItWorksPage.tsx, ComparePage.tsx, batch-scan scripts
+- Revenue Calculator is a strong conversion tool but AOV slider is dead — user adjusts it, nothing changes
+- Pricing page structure is solid, Revenue Calculator adds urgency well
+- Site status: up (new deploy image)
