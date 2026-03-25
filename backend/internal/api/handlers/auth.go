@@ -488,11 +488,17 @@ func (h *AuthHandler) Refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if refresh token is stored
+	// Check if refresh token is stored (include userId for defense-in-depth)
 	tokenHash := hashToken(req.RefreshToken)
+	userOID, err := primitive.ObjectIDFromHex(claims.UserID)
+	if err != nil {
+		respondWithError(w, http.StatusUnauthorized, "Invalid refresh token")
+		return
+	}
 	var storedToken models.RefreshToken
 	err = h.db.RefreshTokens().FindOne(r.Context(), bson.M{
 		"tokenHash": tokenHash,
+		"userId":    userOID,
 	}).Decode(&storedToken)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Refresh token not found")
