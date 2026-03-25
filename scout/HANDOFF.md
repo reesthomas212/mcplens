@@ -62,4 +62,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | verified | scout | 2026-03-25 |
 | 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | deferred | master | 2026-03-25 |
 | 016 | Benchmark service debug logging runs in production every 15 min | medium | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/11 |
-| 017 | CI/CD integration is a paid selling point but has zero documentation | high | new | scout | 2026-03-25 |
+| 017 | CI/CD integration is a paid selling point but has zero documentation | high | deferred | master | 2026-03-25 |
