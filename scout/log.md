@@ -102,6 +102,15 @@
 - Frontend audit found 11 issues across 5 files: chart crash, race condition in ComparePage, missing meta tags on new pages, silent error handling in WhiteLabelTab
 - Site status: up
 
+## Run 2026-03-25 03:30
+- Cycle type: code
+- Phase completed: audit (backend-handlers — auth + billing)
+- Finding: 014 - Refresh token lookup missing userId check
+- Verification: 010 (SSRF) marked REGRESSION — PR merged but code not in service.go. 011 (AOV slider) VERIFIED — aovMultiplier now in formula.
+- Auth audit: strong fundamentals overall (lockout, rate limiting, token family rotation, webhook signatures). ForgotPassword timing leak and inactive plan checkout are lower priority.
+- PR #10 (chart crash) still open
+- Site status: up
+
 ## Run 2026-03-25 03:15
 - Cycle type: product
 - Phase completed: product (market research + scan results value alignment)
