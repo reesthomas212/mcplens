@@ -101,6 +101,7 @@ export default function LandingPage() {
           <nav className="sm:hidden mt-4 flex flex-col gap-3 pb-4 border-t border-slate-200 pt-4">
             <Link to="/how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-slate-900 py-2">How It Works</Link>
             <Link to="/leaderboard" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-slate-900 py-2">Leaderboard</Link>
+            <Link to="/report" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-slate-900 py-2">Ecosystem Report</Link>
             <Link to="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-slate-900 py-2">Pricing</Link>
             <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-sm text-slate-600 hover:text-slate-900 py-2">Sign in</Link>
             <Link to="/scan" onClick={() => setMobileMenuOpen(false)} className="px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-full text-center">Scan Free</Link>
