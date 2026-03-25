@@ -34,6 +34,7 @@ function ScoreTimelineChart({ scans }: { scans: StoredScanEntry[] }) {
 
   const sorted = [...scans].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   const scores = sorted.map(s => s.compositeScore);
+  if (scores.length === 0) return null;
   const minScore = Math.max(0, Math.min(...scores) - 10);
   const maxScore = Math.min(100, Math.max(...scores) + 10);
   const range = maxScore - minScore || 1;

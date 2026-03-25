@@ -64,10 +64,12 @@ function ComparisonChart({ series }: { series: ComparisonSeries[] }) {
   const innerH = height - pad.top - pad.bottom;
 
   const allScores = series.flatMap(s => s.points.map(p => p.score));
+  const allDates = series.flatMap(s => s.points.map(p => new Date(p.date).getTime()));
+  if (allScores.length === 0 || allDates.length === 0) return null;
+
   const minScore = Math.max(0, Math.min(...allScores) - 10);
   const maxScore = Math.min(100, Math.max(...allScores) + 10);
 
-  const allDates = series.flatMap(s => s.points.map(p => new Date(p.date).getTime()));
   const minDate = Math.min(...allDates);
   const maxDate = Math.max(...allDates);
   const dateRange = maxDate - minDate || 1;
