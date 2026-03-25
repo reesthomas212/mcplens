@@ -120,6 +120,14 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 08:30
+- Cycle type: code
+- Phase completed: audit (backend static file serving)
+- Finding: No new finding — corrected 028 diagnosis
+- Investigation: SPA handler code (main.go:61-62) correctly checks os.Stat before fallback. Finding 028 is a deploy issue, not a code bug. The deployed image predates PR #15 (SEO files). Live index.html still references vite.svg (not favicon.svg). Just needs `fly deploy -c fly.saas.toml`.
+- Updated finding 028 description with corrected root cause.
+- PR #17 open for 027. Clean logs. Site up.
+
 ## Run 2026-03-25 08:15
 - Cycle type: product
 - Phase completed: product (competitive analysis + live site verification)

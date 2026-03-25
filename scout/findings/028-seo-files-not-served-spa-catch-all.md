@@ -7,7 +7,9 @@ found: 2026-03-25
 phase: product
 ---
 
-## robots.txt, sitemap.xml, and favicon.svg are in the repo but NOT served — SPA catch-all returns index.html
+## robots.txt, sitemap.xml, and favicon.svg not served — likely needs a deploy (not a code bug)
+
+**Update (cycle 34):** The SPA handler code at `main.go:61-62` correctly checks if files exist before falling back to `index.html`. The issue is that the live deployment predates the PR #15 merge that added these files. The deployed `index.html` still references `vite.svg` (not `favicon.svg`), confirming a stale deploy. Fix: run `fly deploy -c fly.saas.toml` to pick up the SEO files.
 
 **What:** Finding 022 added `robots.txt`, `sitemap.xml`, and `favicon.svg` to `frontend/public/`. The files exist in the source code and were verified there. But on the live site, requesting any of these URLs returns the SPA's `index.html` shell instead of the actual file. The Go backend's catch-all static file handler serves `index.html` for every path that doesn't match an API route — swallowing the static files.
 
