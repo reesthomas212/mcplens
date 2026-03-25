@@ -101,3 +101,12 @@
 - 010 picked up by builder (implementing). Clean logs, no errors.
 - Frontend audit found 11 issues across 5 files: chart crash, race condition in ComparePage, missing meta tags on new pages, silent error handling in WhiteLabelTab
 - Site status: up
+
+## Run 2026-03-25 03:15
+- Cycle type: product
+- Phase completed: product (market research + scan results value alignment)
+- Finding: 013 - Scan results don't map to Shopify's own agentic readiness guidance
+- PRs #8 and #9 still open. Clean logs.
+- Key research: Shopify published "Agentic-Ready Product Data" guide telling merchants exactly what to fix (audit data, structure variants, precise taxonomy, literal descriptions). MCPLens tests these same things but doesn't connect results to Shopify's language. Huge positioning opportunity: "We verify what Shopify tells you to do."
+- Only ~30 merchants on OpenAI Instant Checkout so far. AI shopping orders up 15x since Jan 2025. Shopify making every store "agent-ready by default."
+- Site status: up

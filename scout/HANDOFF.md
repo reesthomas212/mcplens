@@ -58,3 +58,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | done | master | 2026-03-25 |
 | 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | done | master | 2026-03-25 |
 | 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | implementing | builder | 2026-03-25 |
+| 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | new | scout | 2026-03-25 |
