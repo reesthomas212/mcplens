@@ -2,7 +2,7 @@
 id: 010
 type: security
 severity: critical
-status: new
+status: implementing
 found: 2026-03-25
 phase: audit
 ---

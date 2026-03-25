@@ -55,5 +55,5 @@ This file is the coordination protocol between three Claude Code instances:
 | 007 | Landing page assumes store owners know what MCP is — needs knowledge bridge | high | deferred | master | 2026-03-24 |
 | 008 | Checkout flow has 25% score weight but only 1 scenario — never tests cart or checkout | high | verified | scout | 2026-03-25 |
 | 009 | Free scan results lack "what to do next" moment — upsells before value, broken CTA link | high | verified | scout | 2026-03-25 |
-| 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | new | scout | 2026-03-25 |
+| 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | implementing | builder | 2026-03-25 |
 | 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | new | scout | 2026-03-25 |
