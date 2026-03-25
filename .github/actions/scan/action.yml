@@ -37,9 +37,17 @@ runs:
       shell: bash
       env:
         MCPLENS_API_KEY: ${{ inputs.api-key }}
+        INPUT_DOMAIN: ${{ inputs.domain }}
+        INPUT_FAIL_UNDER: ${{ inputs.fail-under }}
       run: |
-        DOMAIN="${{ inputs.domain }}"
-        FAIL_UNDER="${{ inputs.fail-under }}"
+        DOMAIN="$INPUT_DOMAIN"
+        FAIL_UNDER="$INPUT_FAIL_UNDER"
+
+        # Validate domain format to prevent injection
+        if ! echo "$DOMAIN" | grep -qE '^[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'; then
+          echo "::error::Invalid domain format: must be a valid hostname (e.g., allbirds.com)"
+          exit 1
+        fi
 
         echo "::group::MCPLens Scan — $DOMAIN"
 
