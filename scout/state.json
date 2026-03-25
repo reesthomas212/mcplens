@@ -1,13 +1,13 @@
 {
-  "finding_counter": 15,
-  "last_run": "2026-03-25T03:45:00Z",
-  "last_git_sha": "8809d72",
+  "finding_counter": 16,
+  "last_run": "2026-03-25T04:00:00Z",
+  "last_git_sha": "1977ff9",
   "last_crawl": {
     "mcplens.dev": "up",
     "mcplens.dev/scan": "up",
     "mcplens.dev/login": "up"
   },
-  "verified_findings": ["001", "002", "003", "004", "005", "006", "008", "009", "011"],
-  "phase_rotation": "backend-scanner",
-  "cycle_type": "product"
+  "verified_findings": ["001", "002", "003", "004", "005", "006", "008", "009", "010", "011", "012", "014"],
+  "phase_rotation": "config",
+  "cycle_type": "code"
 }

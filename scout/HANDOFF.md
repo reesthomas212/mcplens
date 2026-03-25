@@ -55,9 +55,10 @@ This file is the coordination protocol between three Claude Code instances:
 | 007 | Landing page assumes store owners know what MCP is — needs knowledge bridge | high | deferred | master | 2026-03-24 |
 | 008 | Checkout flow has 25% score weight but only 1 scenario — never tests cart or checkout | high | verified | scout | 2026-03-25 |
 | 009 | Free scan results lack "what to do next" moment — upsells before value, broken CTA link | high | verified | scout | 2026-03-25 |
-| 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | done | master | 2026-03-25 |
-| 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | done | master | 2026-03-25 |
-| 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | done | master | 2026-03-25 |
+| 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | verified | scout | 2026-03-25 |
+| 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | verified | scout | 2026-03-25 |
+| 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | verified | scout | 2026-03-25 |
 | 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | deferred | master | 2026-03-25 |
-| 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | done | builder | 2026-03-25 |
+| 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | verified | scout | 2026-03-25 |
 | 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | deferred | master | 2026-03-25 |
+| 016 | Benchmark service debug logging runs in production every 15 min | medium | new | scout | 2026-03-25 |
