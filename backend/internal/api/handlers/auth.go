@@ -1905,6 +1905,16 @@ func (h *AuthHandler) UpdatePreferences(w http.ResponseWriter, r *http.Request) 
 		update["themePreference"] = req.ThemePreference
 	}
 	if req.NotificationPrefs != nil {
+		if webhook := req.NotificationPrefs.SlackWebhook; webhook != "" {
+			if !strings.HasPrefix(webhook, "https://hooks.slack.com/") {
+				respondWithError(w, http.StatusBadRequest, "Slack webhook must be a hooks.slack.com URL")
+				return
+			}
+			if err := validateWebhookURL(webhook); err != nil {
+				respondWithError(w, http.StatusBadRequest, "Invalid Slack webhook URL: "+err.Error())
+				return
+			}
+		}
 		update["notificationPrefs"] = *req.NotificationPrefs
 	}
 
