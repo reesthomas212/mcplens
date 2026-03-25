@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -109,6 +110,11 @@ func (s *Service) ScanStore(ctx context.Context, domain string, tenantID *primit
 		return nil, fmt.Errorf("empty or invalid domain")
 	}
 
+	// Block private IPs, localhost, and cloud metadata endpoints (SSRF prevention).
+	if err := validateDomain(domain); err != nil {
+		return nil, err
+	}
+
 	// The CLI writes JSON to a file (not stdout). Use a temp file so we can read the result.
 	tmpFile, err := os.CreateTemp("", "mcplens-scan-*.json")
 	if err != nil {
@@ -207,5 +213,43 @@ func sanitiseDomain(domain string) string {
 	}
 	domain = strings.TrimSpace(domain)
 	return domain
+}
+
+// validateDomain blocks private IPs, localhost, and cloud metadata endpoints to prevent SSRF.
+func validateDomain(domain string) error {
+	host, _, err := net.SplitHostPort(domain)
+	if err != nil {
+		// No port — domain is the host.
+		host = domain
+	}
+
+	// Block localhost variants
+	if host == "localhost" || host == "0.0.0.0" || host == "[::1]" {
+		return fmt.Errorf("cannot scan localhost")
+	}
+
+	// Resolve DNS and check all IPs
+	ips, err := net.LookupHost(host)
+	if err != nil {
+		// If DNS fails, check if host is already an IP literal.
+		ip := net.ParseIP(host)
+		if ip == nil {
+			return nil // Not an IP, let it fail at connection time
+		}
+		ips = []string{host}
+	}
+	for _, ipStr := range ips {
+		ip := net.ParseIP(ipStr)
+		if ip == nil {
+			continue
+		}
+		if ip.IsLoopback() || ip.IsPrivate() || ip.IsLinkLocalUnicast() || ip.IsUnspecified() {
+			return fmt.Errorf("cannot scan private or internal addresses")
+		}
+		if ip.Equal(net.ParseIP("169.254.169.254")) {
+			return fmt.Errorf("cannot scan cloud metadata endpoints")
+		}
+	}
+	return nil
 }
 
