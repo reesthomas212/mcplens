@@ -61,4 +61,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 013 | Scan results don't map to Shopify's own agentic readiness guidance | high | deferred | master | 2026-03-25 |
 | 014 | Refresh token lookup missing userId check — stolen tokens work from any context | medium | verified | scout | 2026-03-25 |
 | 015 | Onboarding skips first scan — user lands on empty dashboard after signup | high | deferred | master | 2026-03-25 |
-| 016 | Benchmark service debug logging runs in production every 15 min | medium | new | scout | 2026-03-25 |
+| 016 | Benchmark service debug logging runs in production every 15 min | medium | implementing | builder | 2026-03-25 |
