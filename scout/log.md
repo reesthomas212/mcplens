@@ -120,6 +120,16 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 05:15
+- Cycle type: product
+- Phase completed: product (Ecosystem Report + leaderboard review)
+- Finding: 021 - Ecosystem Report page orphaned — no links anywhere
+- /report page is well-built (percentile distribution, insights, CTA) but not linked from any navigation
+- Noted: rate limit duplicate key errors still appearing occasionally (scan: prefix) but fallback works
+- Noted: someone scanned mcplens.dev itself — scanner fails with 404 on /api/mcp (expected, not a Shopify store)
+- Builder implementing 020. PR #12 (finding 018) still open. Clean otherwise.
+- Site status: up
+
 ## Run 2026-03-25 05:00
 - Cycle type: code
 - Phase completed: audit (scanner/scripts + verification)

@@ -73,3 +73,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 018 | Slack webhook URL not validated — SSRF via notification preferences | high | done | master | 2026-03-25 |
 | 019 | Leaderboard publishes store scores publicly without owner consent | high | deferred | master | 2026-03-25 |
 | 020 | Batch scan script hits production without auth or self-rate-limiting | medium | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/13 |
+| 021 | Ecosystem Report page is built but orphaned — no links point to it | medium | new | scout | 2026-03-25 |
