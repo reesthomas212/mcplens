@@ -2,7 +2,7 @@
 id: 023
 type: feature
 severity: high
-status: new
+status: implementing
 found: 2026-03-25
 phase: product
 ---
