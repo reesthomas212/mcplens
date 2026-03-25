@@ -29,7 +29,14 @@ This file is the coordination protocol between three Claude Code instances:
    If there are conflicts, resolve them on your branch. Never ask Master to resolve your conflicts.
 3. **Touch minimal files.** The fewer files your PR changes, the lower the conflict risk. If a fix requires changes across 5+ files, break it into smaller PRs or coordinate with the user first.
 4. **Don't modify `scout/` files beyond status updates.** You may update the status field in finding files and HANDOFF.md. Do not create new findings — that's the scout's job.
-5. **Test before opening PR.** Run `cd backend && go build ./cmd/server/... && go build ./internal/...` and `cd frontend && npx tsc --noEmit`. If either fails, fix it before opening the PR.
+5. **Only update YOUR finding's row in HANDOFF.md.** Never change the status of other findings — master handles those. If you see a conflict when rebasing HANDOFF.md, always take master's version (`--theirs`) for rows that aren't yours.
+6. **Run the full test suite before opening PR.** Not just build checks — run all tests:
+   ```bash
+   cd backend && go test ./internal/...
+   cd frontend && npx vitest run
+   cd scanner && npm test
+   ```
+   If any test fails, fix it or explain in the PR body why it's pre-existing. Don't open PRs with failing tests.
 
 ## Status Values
 
