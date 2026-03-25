@@ -73,8 +73,10 @@ export default function RevenueCalculator() {
   const agentCommerceShare = 0.05;
   const scoreGap = (100 - score) / 100;
   const agentConversionMultiplier = 5;
+  // Higher AOV items benefit more from agent commerce (research-heavy purchases)
+  const aovMultiplier = aov > 100 ? 1.3 : aov > 50 ? 1.0 : 0.8;
 
-  const monthlyLoss = revenue * agentCommerceShare * scoreGap * agentConversionMultiplier;
+  const monthlyLoss = revenue * agentCommerceShare * scoreGap * agentConversionMultiplier * aovMultiplier;
   const annualLoss = monthlyLoss * 12;
 
   const agentEligibleRevenue = revenue * agentCommerceShare;
