@@ -199,7 +199,7 @@ func (s *TrackedStoreStore) GetComparisonData(ctx context.Context, tenantID prim
 		opts := options.Find().
 			SetSort(bson.D{{Key: "createdAt", Value: -1}}).
 			SetLimit(int64(limit)).
-			SetProjection(bson.M{"createdAt": 1, "compositeScore": 1})
+			SetProjection(bson.M{"createdAt": 1, "scanresult.compositeScore": 1})
 
 		filter := bson.M{
 			"domain": store.Domain,
@@ -216,8 +216,10 @@ func (s *TrackedStoreStore) GetComparisonData(ctx context.Context, tenantID prim
 		}
 
 		var scans []struct {
-			CreatedAt      time.Time `bson:"createdAt"`
-			CompositeScore int       `bson:"compositeScore"`
+			CreatedAt  time.Time `bson:"createdAt"`
+			ScanResult struct {
+				CompositeScore int `bson:"compositeScore"`
+			} `bson:"scanresult"`
 		}
 		if err := cursor.All(ctx, &scans); err != nil {
 			cursor.Close(ctx)
@@ -229,7 +231,7 @@ func (s *TrackedStoreStore) GetComparisonData(ctx context.Context, tenantID prim
 		for i, scan := range scans {
 			points[len(scans)-1-i] = ComparisonPoint{
 				Date:  scan.CreatedAt,
-				Score: scan.CompositeScore,
+				Score: scan.ScanResult.CompositeScore,
 			}
 		}
 

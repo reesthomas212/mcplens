@@ -96,13 +96,14 @@ func (b *BenchmarkService) refresh(ctx context.Context) error {
 	defer cancel()
 
 	// Get the latest score for each unique domain
+	// Note: ScanResult is stored as a nested "scanresult" object, not flattened
 	pipeline := mongo.Pipeline{
 		// Sort by domain + createdAt desc so $first gives latest
 		{{Key: "$sort", Value: bson.D{{Key: "domain", Value: 1}, {Key: "createdAt", Value: -1}}}},
 		// Group by domain, take the latest score
 		{{Key: "$group", Value: bson.M{
 			"_id":   "$domain",
-			"score": bson.M{"$first": "$compositeScore"},
+			"score": bson.M{"$first": "$scanresult.compositeScore"},
 		}}},
 		// Only include valid scores
 		{{Key: "$match", Value: bson.M{
@@ -201,7 +202,7 @@ func (b *BenchmarkService) GetLeaderboard(ctx context.Context, limit int) ([]Lea
 		{{Key: "$sort", Value: bson.D{{Key: "domain", Value: 1}, {Key: "createdAt", Value: -1}}}},
 		{{Key: "$group", Value: bson.M{
 			"_id":       "$domain",
-			"score":     bson.M{"$first": "$compositeScore"},
+			"score":     bson.M{"$first": "$scanresult.compositeScore"},
 			"scannedAt": bson.M{"$first": "$createdAt"},
 		}}},
 		{{Key: "$match", Value: bson.M{"score": bson.M{"$gt": 0}}}},
