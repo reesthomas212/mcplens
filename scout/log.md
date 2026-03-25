@@ -120,6 +120,13 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 09:00
+- Cycle type: code
+- Phase completed: verification
+- Finding: No new finding — verified 027 (GitHub Action injection fix)
+- Verification: 027 VERIFIED — inputs moved to env vars, domain regex validation added. No more ${{ }} interpolation in bash.
+- 19 findings now verified. Clean logs. Site up.
+
 ## Run 2026-03-25 08:45
 - Cycle type: product
 - Phase completed: routine check (maintenance mode)
