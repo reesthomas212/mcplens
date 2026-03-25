@@ -120,6 +120,14 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 08:00
+- Cycle type: code
+- Phase completed: audit (GitHub Action security)
+- Finding: 027 - GitHub Action script injection via ${{ inputs.domain }}
+- inputs.domain interpolated directly into bash — classic script injection pattern. Could exfiltrate API keys.
+- Fix: use env vars instead of ${{ }} interpolation + validate domain format.
+- 19 verified, 7 deferred. Clean logs. Site up.
+
 ## Run 2026-03-25 07:45
 - Cycle type: product
 - Phase completed: product (competitive research)
