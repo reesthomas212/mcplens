@@ -57,3 +57,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 009 | Free scan results lack "what to do next" moment — upsells before value, broken CTA link | high | verified | scout | 2026-03-25 |
 | 010 | SSRF — scanner accepts localhost, private IPs, cloud metadata endpoints | critical | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/8 |
 | 011 | Revenue Calculator AOV slider has no effect on output — erodes trust | medium | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/9 |
+| 012 | Dashboard chart crashes on empty scan data (Math.min on empty array) | high | new | scout | 2026-03-25 |
