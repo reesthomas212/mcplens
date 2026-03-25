@@ -1,0 +1,32 @@
+name: "shopify-policies-check"
+description: "Verify the store's MCP endpoint can answer common buyer questions about shipping, returns, and policies"
+category: data-quality
+requires_capabilities:
+  - policies
+
+setup:
+  - action: policies
+    params: { query: "what is your return policy?", context: "buyer considering purchase" }
+    save_as: policy_result
+
+steps:
+  - assertion: schema_match
+    source: policy_result
+    severity: high
+    score_weight: 5
+    message: "Policies query returned invalid or empty response — AI agents cannot answer buyer questions about returns/shipping"
+
+  - assertion: field_present
+    source: policy_result
+    field: answer
+    severity: high
+    score_weight: 8
+    message: "Policy response missing 'answer' field — AI agents cannot relay return policy to buyers"
+
+  - assertion: field_non_empty
+    source: policy_result.answer
+    severity: medium
+    score_weight: 5
+    message: "Policy answer is empty — AI agents will tell buyers 'return policy is unavailable', reducing purchase confidence"
+
+teardown: []
