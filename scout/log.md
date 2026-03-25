@@ -120,6 +120,16 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 07:45
+- Cycle type: product
+- Phase completed: product (competitive research)
+- Finding: 026 - At least 4 competitors launched — first-mover window closing
+- Competitors: shopaudit.app, ucptools.dev, fudge.ai, zeodyn.com — all offer free AI readiness scans
+- ucptools.dev and fudge.ai already test UCP (finding 025 gap). zeodyn.com uses 6-dimension scoring.
+- MCPLens moat: actual MCP protocol testing with live scenarios (not just metadata/structured data checks). Need to communicate this.
+- App had cold-start connection errors (normal Fly.io auto-stop behavior).
+- 19 verified, 7 deferred. Site up.
+
 ## Run 2026-03-25 07:30
 - Cycle type: code
 - Phase completed: routine check (maintenance mode)
