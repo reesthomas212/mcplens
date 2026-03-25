@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /last/
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /onboarding
+
+Sitemap: https://mcplens.dev/sitemap.xml
