@@ -111,6 +111,15 @@
 - PR #10 (chart crash) still open
 - Site status: up
 
+## Run 2026-03-25 04:45
+- Cycle type: product
+- Phase completed: product (leaderboard + How It Works review)
+- Finding: 019 - Leaderboard publishes store scores without owner consent
+- How It Works page is excellent — addresses finding 007 ("Your store already talks to AI agents"), renamed Protocol Compliance to Technical Health
+- Leaderboard shows all scanned stores publicly with no opt-in/out. Competitor weaponization risk.
+- PR #11 still open. Clean logs.
+- Site status: up
+
 ## Run 2026-03-25 04:30
 - Cycle type: code
 - Phase completed: audit (rescan service — backend-scanner/config rotation)

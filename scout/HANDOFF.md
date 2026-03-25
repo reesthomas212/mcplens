@@ -71,3 +71,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 016 | Benchmark service debug logging runs in production every 15 min | medium | done | master | 2026-03-25 |
 | 017 | CI/CD integration is a paid selling point but has zero documentation | high | deferred | master | 2026-03-25 |
 | 018 | Slack webhook URL not validated — SSRF via notification preferences | high | implementing | builder | 2026-03-25 |
+| 019 | Leaderboard publishes store scores publicly without owner consent | high | new | scout | 2026-03-25 |
