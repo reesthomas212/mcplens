@@ -80,3 +80,4 @@ This file is the coordination protocol between three Claude Code instances:
 | 025 | UCP (Universal Commerce Protocol) launched — MCPLens doesn't test or mention it | medium | deferred | master | 2026-03-25 |
 | 026 | At least 4 competitors launched — first-mover window closing | high | deferred | master | 2026-03-25 |
 | 027 | GitHub Action has script injection vulnerability via domain input | high | pr-open | builder | 2026-03-25 | https://github.com/reesthomas212/mcplens/pull/17 |
+| 028 | robots.txt/sitemap.xml/favicon not served — SPA catch-all returns index.html | high | new | scout | 2026-03-25 |

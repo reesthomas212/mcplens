@@ -120,6 +120,15 @@
 - PR #11 still open. Clean logs.
 - Site status: up
 
+## Run 2026-03-25 08:15
+- Cycle type: product
+- Phase completed: product (competitive analysis + live site verification)
+- Finding: 028 - robots.txt/sitemap/favicon NOT SERVED — SPA catch-all returns index.html for all three
+- CRITICAL: finding 022 regression — files exist in source but Go backend doesn't serve them. curl confirms all return HTML.
+- Competitor analysis: ucptools.dev ($9/mo monitoring), shopaudit.app (free, checks llms.txt). Neither tests live MCP endpoint. MCPLens's moat is live scenarios but this isn't communicated.
+- Finding 022 re-marked as NOT verified (files exist but aren't served).
+- Site status: up, clean logs
+
 ## Run 2026-03-25 08:00
 - Cycle type: code
 - Phase completed: audit (GitHub Action security)
