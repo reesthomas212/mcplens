@@ -1,6 +1,6 @@
 // --- Capability Mapping ---
 
-export type CapabilityName = "search" | "get_detail" | "add_to_cart" | "checkout";
+export type CapabilityName = "search" | "get_detail" | "add_to_cart" | "checkout" | "policies";
 
 export type ConfidenceLevel = "high" | "low" | "none";
 

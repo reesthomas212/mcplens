@@ -32,6 +32,12 @@ export const KEYWORD_DICTIONARY: KeywordRule[] = [
     descriptionKeywords: ["checkout", "order", "purchase"],
     requiredParamPatterns: [],
   },
+  {
+    capability: "policies",
+    nameKeywords: ["search_shop_policies", "policies", "faq", "policy", "shipping_info", "search_shop_policies_and_faqs"],
+    descriptionKeywords: ["policy", "faq", "shipping", "returns", "help", "policies"],
+    requiredParamPatterns: ["query"],
+  },
 ];
 
 export const CAPABILITY_CHECK_ORDER: CapabilityName[] = [
@@ -39,6 +45,7 @@ export const CAPABILITY_CHECK_ORDER: CapabilityName[] = [
   "get_detail",
   "add_to_cart",
   "checkout",
+  "policies",
 ];
 
 export const CATEGORY_WEIGHTS: Record<CategoryName, number> = {
