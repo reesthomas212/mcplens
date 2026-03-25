@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"context"
+	"log/slog"
 	"sort"
 	"sync"
 	"time"
@@ -109,8 +110,13 @@ func (b *BenchmarkService) refresh(ctx context.Context) error {
 		}}},
 	}
 
+	// First, count total docs to verify collection access
+	totalDocs, countErr := b.col.CountDocuments(ctx, bson.M{})
+	slog.Info("Benchmark refresh: collection stats", "totalDocs", totalDocs, "countErr", countErr)
+
 	cursor, err := b.col.Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 	if err != nil {
+		slog.Error("Benchmark aggregation failed", "error", err)
 		return err
 	}
 	defer cursor.Close(ctx)
@@ -120,8 +126,11 @@ func (b *BenchmarkService) refresh(ctx context.Context) error {
 		Score  int    `bson:"score"`
 	}
 	if err := cursor.All(ctx, &results); err != nil {
+		slog.Error("Benchmark cursor decode failed", "error", err)
 		return err
 	}
+
+	slog.Info("Benchmark refresh complete", "uniqueDomains", len(results))
 
 	if len(results) == 0 {
 		return nil
