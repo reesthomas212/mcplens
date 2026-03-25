@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://mcplens.dev/</loc><priority>1.0</priority></url>
+  <url><loc>https://mcplens.dev/scan</loc><priority>0.9</priority></url>
+  <url><loc>https://mcplens.dev/pricing</loc><priority>0.8</priority></url>
+  <url><loc>https://mcplens.dev/how-it-works</loc><priority>0.8</priority></url>
+  <url><loc>https://mcplens.dev/leaderboard</loc><priority>0.7</priority></url>
+  <url><loc>https://mcplens.dev/report</loc><priority>0.7</priority></url>
+  <url><loc>https://mcplens.dev/compare</loc><priority>0.6</priority></url>
+  <url><loc>https://mcplens.dev/terms</loc><priority>0.3</priority></url>
+  <url><loc>https://mcplens.dev/privacy</loc><priority>0.3</priority></url>
+</urlset>
