@@ -162,7 +162,16 @@ interface Finding {
   category: string;
   impact: string;
   fix: string;
+  shopifyGuidance?: string;
 }
+
+// Maps category issues to Shopify's official agentic readiness guidance
+const SHOPIFY_GUIDANCE: Record<string, string> = {
+  'data-quality': 'Shopify recommends: "Pricing and inventory must be current at moment of inquiry. Product descriptions should be literal and structured for machine comparison, not marketing copy."',
+  'product-discovery': 'Shopify recommends: "Use precise product taxonomy. AI agents need structured categories and attributes to filter and compare — vague product types cause discovery failures."',
+  'checkout-flow': 'Shopify recommends: "Structure variants under parent products with clear identifiers. AI agents need variant_id, availability, and pricing to complete add-to-cart."',
+  'protocol-compliance': 'Shopify recommends: "Ensure your storefront MCP endpoint returns properly structured responses. AI agents like ChatGPT and Google rely on this interface to shop your store."',
+};
 
 function severityColor(severity: string): string {
   if (severity === 'high') return '#dc2626';
@@ -192,6 +201,7 @@ function generateFindings(result: ScanResult): Finding[] {
           category: label,
           impact: `Your ${label} score is capped at ${sk.cap}/100 because of this issue. This directly limits your overall readiness score.`,
           fix: `Address the "${sk.condition}" issue in your MCP server configuration. This is the highest-impact fix you can make for ${label}.`,
+          shopifyGuidance: SHOPIFY_GUIDANCE[cat.category],
         });
       }
     }
@@ -205,6 +215,7 @@ function generateFindings(result: ScanResult): Finding[] {
           category: label,
           impact: 'Products with missing prices, short descriptions, or invalid images are invisible to AI buyer agents.',
           fix: 'Ensure every product has a valid price, 50+ character description, and working image URLs. Add structured attributes for key specs.',
+          shopifyGuidance: SHOPIFY_GUIDANCE['data-quality'],
         },
         'product-discovery': {
           title: 'Weak Product Discovery',
@@ -212,6 +223,7 @@ function generateFindings(result: ScanResult): Finding[] {
           category: label,
           impact: 'If agents cannot search and find products reliably, your store is skipped entirely.',
           fix: 'Verify your search returns results for common queries. Ensure product names, descriptions, and categories are indexed.',
+          shopifyGuidance: SHOPIFY_GUIDANCE['product-discovery'],
         },
         'checkout-flow': {
           title: 'Broken Checkout Flow',
@@ -219,13 +231,15 @@ function generateFindings(result: ScanResult): Finding[] {
           category: label,
           impact: 'Agents that cannot add items to cart or initiate checkout will abandon your store.',
           fix: 'Test cart operations (add, update, remove) and checkout initiation. Ensure all required fields are documented.',
+          shopifyGuidance: SHOPIFY_GUIDANCE['checkout-flow'],
         },
         'protocol-compliance': {
-          title: 'Protocol Compliance Issues',
+          title: 'Technical Health Issues',
           severity: 'medium',
           category: label,
-          impact: 'Non-compliant MCP responses may cause agent errors or fallback behavior.',
-          fix: 'Review the MCP specification and ensure your server returns properly formatted responses with correct error codes.',
+          impact: 'Unreliable responses may cause AI agents to error out or fall back to competitors.',
+          fix: 'Ensure your store\'s AI interface returns properly formatted responses with correct error codes and fast response times.',
+          shopifyGuidance: SHOPIFY_GUIDANCE['protocol-compliance'],
         },
       };
       const f = categoryFindings[cat.category];
@@ -237,6 +251,7 @@ function generateFindings(result: ScanResult): Finding[] {
         category: label,
         impact: `Your ${label} score of ${Math.round(cat.cappedScore)} means agents can partially use your store but may encounter issues.`,
         fix: `Review the ${label.toLowerCase()} section of your MCP server. Common issues include incomplete data fields, slow responses, or missing edge case handling.`,
+        shopifyGuidance: SHOPIFY_GUIDANCE[cat.category],
       });
     }
   }
@@ -330,6 +345,15 @@ function EmailGate({ domain, score, onUnlocked }: { domain: string; score: numbe
 
 // --- Finding Card ---
 
+function ShopifyBadge({ guidance }: { guidance: string }) {
+  return (
+    <div className="mt-2 flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+      <svg className="w-4 h-4 mt-0.5 text-green-600 shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 2.1c-.2-.1-.4 0-.5.1l-1.3 1.5c-.5-.3-1.1-.4-1.7-.1l-1-1.8c-.1-.2-.4-.3-.6-.2-.2.1-.3.3-.2.6l1 1.7c-.5.4-.8 1-.8 1.7L8 5.8c-.2-.1-.5 0-.6.2-.1.2 0 .5.2.6l2.3.7v.1c0 .6.3 1.2.8 1.5l-4.5 8.9c-.4.8-.1 1.8.7 2.2l5.5 2.8c.3.1.5.2.8.2.6 0 1.2-.3 1.5-.9l4.5-8.9c.5-.1.9-.5 1.1-1l2.2-.9c.2-.1.3-.4.2-.6-.1-.2-.3-.3-.6-.2l-2.1.8c-.1-.3-.3-.6-.6-.8l.8-2c.1-.2 0-.5-.2-.6-.2-.1-.5 0-.6.2l-.8 2c-.2 0-.4 0-.6.1L16.6 3l-.1-.1v-.1c0-.3-.3-.6-.6-.6l-.4-.1z"/></svg>
+      <p className="text-xs text-green-800 italic leading-relaxed">{guidance}</p>
+    </div>
+  );
+}
+
 function FindingCard({ finding, fixUnlocked, checked, onToggle }: { finding: Finding; fixUnlocked: boolean; checked: boolean; onToggle: () => void }) {
   return (
     <div className={`border rounded-xl p-4 ${checked ? 'bg-slate-50 border-slate-200 opacity-70' : severityBg(finding.severity)} transition-all`}>
@@ -354,6 +378,7 @@ function FindingCard({ finding, fixUnlocked, checked, onToggle }: { finding: Fin
           <h4 className={`font-semibold text-sm ${checked ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{finding.title}</h4>
           <p className="text-xs text-slate-500 mt-0.5">{finding.category}</p>
           {!checked && <p className="text-sm text-slate-700 mt-2">{finding.impact}</p>}
+          {!checked && finding.shopifyGuidance && <ShopifyBadge guidance={finding.shopifyGuidance} />}
           {fixUnlocked && !checked ? (
             <div className="mt-3 bg-white/70 border border-slate-200 rounded-lg p-3">
               <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">How to fix</div>
