@@ -111,6 +111,16 @@
 - PR #10 (chart crash) still open
 - Site status: up
 
+## Run 2026-03-25 04:30
+- Cycle type: code
+- Phase completed: audit (rescan service — backend-scanner/config rotation)
+- Finding: 018 - Slack webhook URL not validated — SSRF via notification preferences
+- Rescan service well-structured: leader locking, batch processing, weekly digests, score change alerts
+- But Slack webhook URL stored from user input is used in http.DefaultClient.Do() with no SSRF checks
+- Same class as finding 010 but through a different code path — validateWebhookURL exists but isn't used here
+- 016 PR #11 still open. Clean logs.
+- Site status: up
+
 ## Run 2026-03-25 04:15
 - Cycle type: product
 - Phase completed: product (CI/CD + developer experience analysis)
