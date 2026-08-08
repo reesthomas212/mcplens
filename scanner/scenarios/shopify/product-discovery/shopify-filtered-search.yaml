@@ -1,13 +1,14 @@
 name: "shopify-filtered-search"
-description: "Filtered Shopify search returns results and exposes available_filters for refinement"
+description: "Filtered Shopify search returns results with product options agents can use for refinement"
 category: product-discovery
 requires_capabilities:
   - search
 
 setup:
   - action: search
-    params: { query: "running shoes", limit: 10, context: "browsing" }
+    params: { catalog: { query: "running shoes" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty
@@ -17,18 +18,18 @@ steps:
     message: "Filtered search for 'running shoes' returned no products"
 
   - assertion: field_present
-    source: search_results
-    field: available_filters
+    source: search_results.products.0
+    field: options
     severity: medium
     score_weight: 8
-    message: "Search missing 'available_filters' — agents cannot offer follow-up filtering"
+    message: "Products missing 'options' — agents cannot offer size/color refinement"
 
   - assertion: each_item_has_field
     source: search_results.products
-    field: product_id
+    field: id
     condition: non_null
     severity: high
     score_weight: 7
-    message: "Products missing 'product_id' — agents cannot fetch product details"
+    message: "Products missing 'id' — agents cannot fetch product details"
 
 teardown: []

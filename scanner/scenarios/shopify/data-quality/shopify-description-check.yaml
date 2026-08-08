@@ -6,8 +6,9 @@ requires_capabilities:
 
 setup:
   - action: search
-    params: { query: "sneakers", limit: 10, context: "browsing" }
+    params: { catalog: { query: "sneakers" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty

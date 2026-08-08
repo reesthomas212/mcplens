@@ -1,13 +1,14 @@
 name: "shopify-price-check"
-description: "Checks that returned Shopify products have price_range data with a valid min price"
+description: "Checks that returned Shopify products have price_range data with a valid min price and currency"
 category: data-quality
 requires_capabilities:
   - search
 
 setup:
   - action: search
-    params: { query: "shoes", limit: 10, context: "browsing" }
+    params: { catalog: { query: "shoes" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty
@@ -43,10 +44,10 @@ steps:
     message: "price_range missing 'min' field on first product"
 
   - assertion: field_present
-    source: search_results.products.0.price_range
+    source: search_results.products.0.price_range.min
     field: currency
     severity: medium
     score_weight: 5
-    message: "price_range missing 'currency' field on first product"
+    message: "price_range.min missing 'currency' field on first product"
 
 teardown: []

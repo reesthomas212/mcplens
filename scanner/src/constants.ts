@@ -12,11 +12,11 @@ export const KEYWORD_DICTIONARY: KeywordRule[] = [
     capability: "search",
     nameKeywords: ["search", "find", "query", "browse", "list_products", "catalog", "search_shop_catalog", "shop_catalog"],
     descriptionKeywords: ["search", "find", "browse", "catalog", "query"],
-    requiredParamPatterns: ["query", "keyword", "q", "search", "term"],
+    requiredParamPatterns: ["query", "keyword", "q", "search", "term", "catalog"],
   },
   {
     capability: "get_detail",
-    nameKeywords: ["get_product", "product_detail", "item_detail", "product_info", "get_item"],
+    nameKeywords: ["get_product", "product_detail", "item_detail", "product_info", "get_item", "get_product_details", "lookup_catalog"],
     descriptionKeywords: ["detail", "information", "specific product"],
     requiredParamPatterns: ["id", "product_id", "item_id", "sku"],
   },
@@ -28,7 +28,7 @@ export const KEYWORD_DICTIONARY: KeywordRule[] = [
   },
   {
     capability: "checkout",
-    nameKeywords: ["checkout", "create_order", "place_order", "purchase"],
+    nameKeywords: ["checkout", "create_order", "place_order", "purchase", "create_checkout", "get_checkout", "complete_checkout"],
     descriptionKeywords: ["checkout", "order", "purchase"],
     requiredParamPatterns: [],
   },
@@ -40,12 +40,15 @@ export const KEYWORD_DICTIONARY: KeywordRule[] = [
   },
 ];
 
+// policies is checked before search so search_shop_policies_and_faqs
+// (whose name starts with "search" and has a "query" param) is claimed
+// by the policies capability and never mistaken for catalog search.
 export const CAPABILITY_CHECK_ORDER: CapabilityName[] = [
+  "policies",
   "search",
   "get_detail",
   "add_to_cart",
   "checkout",
-  "policies",
 ];
 
 export const CATEGORY_WEIGHTS: Record<CategoryName, number> = {

@@ -1,13 +1,14 @@
 name: "shopify-search"
-description: "Basic search returns results using Shopify's search_shop_catalog tool"
+description: "Basic search returns results using Shopify's UCP search_catalog tool"
 category: product-discovery
 requires_capabilities:
   - search
 
 setup:
   - action: search
-    params: { query: "sneakers", limit: 10, context: "browsing" }
+    params: { catalog: { query: "sneakers" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: schema_match
@@ -21,7 +22,7 @@ steps:
     field: products
     severity: high
     score_weight: 10
-    message: "Search response missing 'products' field — Shopify MCP schema may have changed"
+    message: "Search response missing 'products' field — Shopify UCP schema may have changed"
 
   - assertion: array_non_empty
     source: search_results.products
@@ -37,10 +38,10 @@ steps:
     message: "Search response missing 'pagination' field"
 
   - assertion: field_present
-    source: search_results
-    field: available_filters
-    severity: low
-    score_weight: 3
-    message: "Search response missing 'available_filters' — agents cannot offer filter refinement"
+    source: search_results.products.0
+    field: id
+    severity: high
+    score_weight: 5
+    message: "First product missing 'id' — agents cannot reference products for detail or cart operations"
 
 teardown: []

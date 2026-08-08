@@ -50,6 +50,22 @@ function resolveSource(
   return data;
 }
 
+/** True when a catalog search result parsed to an object whose products array is empty. */
+function isEmptyProductResult(content: unknown): boolean {
+  if (content === null || typeof content !== "object" || Array.isArray(content)) return false;
+  const products = (content as Record<string, unknown>)["products"];
+  return Array.isArray(products) && products.length === 0;
+}
+
+/** Returns a copy of UCP catalog search params with the query replaced. */
+function withCatalogQuery(params: Record<string, unknown>, query: string): Record<string, unknown> {
+  const catalog = params["catalog"];
+  if (catalog !== null && typeof catalog === "object" && !Array.isArray(catalog)) {
+    return { ...params, catalog: { ...(catalog as Record<string, unknown>), query } };
+  }
+  return { ...params, query };
+}
+
 /**
  * Main test orchestration function.
  */
@@ -133,7 +149,23 @@ export async function runTests(
       }
       try {
         log(`  Setup: calling ${toolName} with ${JSON.stringify(step.params)}`);
-        const result = await connection.callTool(toolName, step.params as Record<string, unknown>);
+        let result = await connection.callTool(toolName, step.params as Record<string, unknown>);
+
+        // Store catalogs differ wildly; a query tuned for one niche can
+        // legitimately return zero products on another. When the scenario
+        // provides fallback_queries, retry with each until products appear.
+        if (step.fallback_queries && step.fallback_queries.length > 0 && isEmptyProductResult(result.content)) {
+          for (const fallbackQuery of step.fallback_queries) {
+            const retryParams = withCatalogQuery(step.params as Record<string, unknown>, fallbackQuery);
+            log(`  Setup: no products — retrying ${toolName} with query "${fallbackQuery}"`);
+            const retry = await connection.callTool(toolName, retryParams);
+            if (!isEmptyProductResult(retry.content)) {
+              result = retry;
+              break;
+            }
+          }
+        }
+
         if (step.save_as) {
           variables[step.save_as] = result.content;
           // Also store the duration for potential response_time assertions

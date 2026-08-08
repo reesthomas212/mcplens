@@ -1,13 +1,14 @@
 name: "shopify-image-check"
-description: "Checks that Shopify products expose image URLs that agents can use in responses"
+description: "Checks that Shopify products expose media (images) that agents can use in responses"
 category: data-quality
 requires_capabilities:
   - search
 
 setup:
   - action: search
-    params: { query: "running", limit: 10, context: "browsing" }
+    params: { catalog: { query: "running" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty
@@ -18,18 +19,18 @@ steps:
 
   - assertion: percentage_threshold
     source: search_results.products
-    field: image_url
+    field: media
     condition: non_null
     threshold: 80
     severity: medium
     score_weight: 8
-    message: "{fail_pct}% of products lack an image_url (threshold: 20%)"
+    message: "{fail_pct}% of products lack media (threshold: 20%)"
 
   - assertion: field_present
-    source: search_results.products.0
-    field: image_url
+    source: search_results.products.0.media.0
+    field: url
     severity: medium
     score_weight: 5
-    message: "First product is missing image_url field"
+    message: "First product's media entry is missing a 'url' — agents cannot show product images"
 
 teardown: []

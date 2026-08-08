@@ -22,6 +22,8 @@ export interface ScenarioSetupStep {
   action: CapabilityName;
   params: Record<string, unknown>;
   save_as: string;
+  /** Alternate catalog search queries to try when the primary query returns no products. */
+  fallback_queries?: string[];
 }
 
 export interface ScenarioAssertion {
