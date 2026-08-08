@@ -86,6 +86,12 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Shopify's UCP negotiation rejects agent profiles served without an
+	// explicit cacheable Cache-Control header ("Invalid cache control").
+	if r.URL.Path == "/ucp-agent.json" {
+		w.Header().Set("Cache-Control", "public, max-age=3600, stale-while-revalidate=7200")
+	}
+
 	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
 }
 
