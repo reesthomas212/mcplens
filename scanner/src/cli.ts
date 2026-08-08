@@ -3,7 +3,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { Command } from "commander";
-import { connectStdio, connectSSE, connectHTTP } from "./connection.js";
+import { connectStdio, connectSSE, connectHTTP, connectShopify } from "./connection.js";
 import { runTests } from "./runner.js";
 import { writeReport } from "./report/html-report.js";
 import { CliOptions } from "./types.js";
@@ -220,13 +220,11 @@ program
       // --- Single domain (original behaviour) ---
       if (domains.length === 1) {
         const domain = domains[0];
-        const url = `https://${domain}/api/mcp`;
         if (opts.verbose) {
           process.stderr.write(`Scanning Shopify store: ${domain}\n`);
-          process.stderr.write(`Connecting via Streamable HTTP: ${url}\n`);
         }
 
-        const connection = await connectHTTP(url, headersArg);
+        const connection = await connectShopify(domain, headersArg, opts.verbose ? (m: string) => process.stderr.write(m + "\n") : undefined);
         try {
           const verboseLog = opts.verbose ? (msg: string) => process.stderr.write(msg + "\n") : undefined;
           const result = await runTests(connection, { verbose: opts.verbose, log: verboseLog, scenariosDir: shopifyScenariosDir, assess: opts.assess, simulate: opts.simulate, personas: opts.personas?.split(",").map(p => p.trim()).filter(Boolean) });
@@ -284,13 +282,9 @@ program
       const results: DomainResult[] = [];
 
       for (const domain of domains) {
-        const url = `https://${domain}/api/mcp`;
         process.stdout.write(`  Scanning ${domain}...\n`);
-        if (opts.verbose) {
-          process.stderr.write(`Connecting via Streamable HTTP: ${url}\n`);
-        }
 
-        const connection = await connectHTTP(url, headersArg);
+        const connection = await connectShopify(domain, headersArg, opts.verbose ? (m: string) => process.stderr.write(m + "\n") : undefined);
         try {
           const verboseLog = opts.verbose ? (msg: string) => process.stderr.write(msg + "\n") : undefined;
           const result = await runTests(connection, { verbose: opts.verbose, log: verboseLog, scenariosDir: shopifyScenariosDir, assess: opts.assess, simulate: opts.simulate, personas: opts.personas?.split(",").map(p => p.trim()).filter(Boolean) });
@@ -401,9 +395,8 @@ program
         await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
       }
 
-      const url = `https://${domain}/api/mcp`;
       try {
-        const connection = await connectHTTP(url);
+        const connection = await connectShopify(domain);
         const verboseLog = opts.verbose ? (msg: string) => process.stderr.write(msg + "\n") : undefined;
         const result = await runTests(connection, { verbose: opts.verbose, log: verboseLog, scenariosDir: shopifyScenariosDir });
         await connection.close();
