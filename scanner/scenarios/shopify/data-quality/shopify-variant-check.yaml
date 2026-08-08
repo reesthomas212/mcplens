@@ -6,8 +6,9 @@ requires_capabilities:
 
 setup:
   - action: search
-    params: { query: "shoe bag", limit: 5, context: "browsing" }
+    params: { catalog: { query: "shoe bag" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty
@@ -18,18 +19,18 @@ steps:
 
   - assertion: each_item_has_field
     source: search_results.products
-    field: product_id
+    field: id
     condition: non_null
     severity: high
     score_weight: 8
-    message: "Products missing 'product_id' — agents cannot fetch product details for variant selection"
+    message: "Products missing 'id' — agents cannot fetch product details for variant selection"
 
   - assertion: field_present
     source: search_results.products.0.variants.0
-    field: variant_id
+    field: id
     severity: medium
     score_weight: 5
-    message: "First variant missing 'variant_id' — agents may not be able to add simple products to cart directly"
+    message: "First variant missing 'id' — agents may not be able to add simple products to cart directly"
 
   - assertion: field_present
     source: search_results.products.0.variants.0
@@ -40,9 +41,9 @@ steps:
 
   - assertion: field_present
     source: search_results.products.0.variants.0
-    field: available
+    field: availability
     severity: low
     score_weight: 3
-    message: "First variant missing 'available' field — agents cannot check stock"
+    message: "First variant missing 'availability' field — agents cannot check stock"
 
 teardown: []

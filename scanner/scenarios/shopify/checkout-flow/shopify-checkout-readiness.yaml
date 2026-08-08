@@ -1,14 +1,14 @@
 name: "shopify-checkout-readiness"
-description: "Checks that the store exposes checkout capability and that products have the pricing and currency data an agent needs to complete a purchase — read-only, does not call checkout"
+description: "Checks that products have the pricing and currency data an agent needs to complete a purchase — read-only, does not call checkout"
 category: checkout-flow
 requires_capabilities:
-  - checkout
   - search
 
 setup:
   - action: search
-    params: { query: "shoes bag jacket", limit: 5, context: "browsing" }
+    params: { catalog: { query: "shoes bag jacket" } }
     save_as: search_results
+    fallback_queries: ["gift", "shirt", "coffee", "bag", "accessories"]
 
 steps:
   - assertion: array_non_empty
@@ -19,11 +19,11 @@ steps:
 
   - assertion: each_item_has_field
     source: search_results.products
-    field: product_id
+    field: id
     condition: non_null
     severity: high
     score_weight: 8
-    message: "Products missing 'product_id' — agents cannot identify items for checkout"
+    message: "Products missing 'id' — agents cannot identify items for checkout"
 
   - assertion: each_item_has_field
     source: search_results.products
@@ -34,7 +34,7 @@ steps:
     message: "Products missing 'price_range' — agents cannot present total cost to buyer before checkout"
 
   - assertion: field_present
-    source: search_results.products.0.price_range
+    source: search_results.products.0.price_range.min
     field: currency
     severity: high
     score_weight: 8

@@ -36,18 +36,29 @@ function buildConnection(client: Client): McpConnection {
       const result = await Promise.race([callPromise, timeoutPromise]);
       const durationMs = Date.now() - start;
 
-      // Parse JSON from MCP text content responses
+      // Parse JSON from MCP text content responses.
+      // UCP-conforming Shopify endpoints may append extra text parts
+      // (e.g. deprecation notices), so use the first part that parses as JSON.
       let content: unknown = result.content;
       if (Array.isArray(result.content)) {
         const textParts = result.content.filter(
           (c: { type: string; text?: string }) => c.type === "text" && typeof c.text === "string",
         );
-        if (textParts.length === 1) {
+        let parsed: unknown;
+        let parsedFound = false;
+        for (const part of textParts) {
           try {
-            content = JSON.parse((textParts[0] as { text: string }).text);
+            parsed = JSON.parse((part as { text: string }).text);
+            parsedFound = true;
+            break;
           } catch {
-            content = (textParts[0] as { text: string }).text;
+            // not JSON — try the next text part
           }
+        }
+        if (parsedFound) {
+          content = parsed;
+        } else if (textParts.length === 1) {
+          content = (textParts[0] as { text: string }).text;
         }
       }
 
