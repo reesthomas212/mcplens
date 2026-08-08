@@ -47,7 +47,7 @@ describe('ScanPage', () => {
 
   it('renders the heading', () => {
     renderScanPage();
-    expect(screen.getByText(/how ai-ready/i)).toBeTruthy();
+    expect(screen.getByText(/can ai shoppers use this shopify store/i)).toBeTruthy();
   });
 
   it('renders the domain input', () => {

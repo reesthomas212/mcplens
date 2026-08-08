@@ -639,3 +639,48 @@ func TestGetSubscription(t *testing.T) {
 		t.Errorf("expected sub_test123, got %q", sub.ID)
 	}
 }
+
+func TestCreateCheckoutSessionScanPurchaseAmountOnly(t *testing.T) {
+	database, cleanup := testutil.MustConnectTestDB(t)
+	defer cleanup()
+	testutil.CleanupCollections(t, database)
+
+	mock, mockCleanup := setupMockStripe(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		switch {
+		case r.URL.Path == "/v1/checkout/sessions":
+			json.NewEncoder(w).Encode(map[string]interface{}{
+				"id":     "cs_scan",
+				"object": "checkout.session",
+				"url":    "https://checkout.stripe.com/pay/cs_scan",
+			})
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	})
+	defer mockCleanup()
+	_ = mock
+
+	svc := New("sk_test", "pk_test", "whsec_test", database, "http://localhost:4280")
+
+	// Amount-only purchase (scan AI assessment): no PlanID, no BundleID.
+	// Regression: previously dereferenced a nil BundleID and panicked -> HTTP 500.
+	url, err := svc.CreateCheckoutSession(t.Context(), CheckoutRequest{
+		CustomerID:  "cus_123",
+		BundleName:  "AI Quality Assessment",
+		AmountCents: 500,
+		Currency:    "usd",
+		TenantID:    "tenant_123",
+		UserID:      "user_123",
+		ExtraMetadata: map[string]string{
+			"scanPurchase": "assess",
+			"scanDomain":   "allbirds.com",
+		},
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if url == "" {
+		t.Error("expected non-empty checkout URL")
+	}
+}

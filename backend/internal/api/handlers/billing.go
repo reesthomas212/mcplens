@@ -679,8 +679,8 @@ func (h *BillingHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, map[string]string{"publishableKey": pubKey})
 }
 
-// PurchaseScan creates a Stripe one-time checkout for a scan feature ($5 AI assessment or $10 simulation).
-// Body: {"domain": "allbirds.com", "feature": "assess" | "simulate"}
+// PurchaseScan creates a Stripe one-time checkout for a scan feature.
+// Body: {"domain": "allbirds.com", "feature": "assess" | "simulate" | "audit"}
 // Requires auth + tenant.
 func (h *BillingHandler) PurchaseScan(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -697,7 +697,7 @@ func (h *BillingHandler) PurchaseScan(w http.ResponseWriter, r *http.Request) {
 
 	var req struct {
 		Domain  string `json:"domain"`
-		Feature string `json:"feature"` // "assess" or "simulate"
+		Feature string `json:"feature"` // "assess", "simulate", or "audit"
 	}
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request body")
@@ -707,8 +707,8 @@ func (h *BillingHandler) PurchaseScan(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "domain is required")
 		return
 	}
-	if req.Feature != "assess" && req.Feature != "simulate" {
-		respondWithError(w, http.StatusBadRequest, "feature must be 'assess' or 'simulate'")
+	if req.Feature != "assess" && req.Feature != "simulate" && req.Feature != "audit" {
+		respondWithError(w, http.StatusBadRequest, "feature must be 'assess', 'simulate', or 'audit'")
 		return
 	}
 
@@ -722,9 +722,12 @@ func (h *BillingHandler) PurchaseScan(w http.ResponseWriter, r *http.Request) {
 	if req.Feature == "assess" {
 		amountCents = 500 // $5
 		productName = "AI Quality Assessment"
-	} else {
+	} else if req.Feature == "simulate" {
 		amountCents = 1000 // $10
 		productName = "Simulated Buyer Agent"
+	} else {
+		amountCents = 19900 // $199
+		productName = "Human-Reviewed Agent Commerce Audit"
 	}
 
 	currency := strings.ToLower(h.store.Get("billing.default_currency"))

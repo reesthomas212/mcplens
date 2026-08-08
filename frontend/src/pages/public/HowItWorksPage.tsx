@@ -51,7 +51,7 @@ function CategoryCard({ name, icon, description, examples }: { name: string; ico
 
 export default function HowItWorksPage() {
   useEffect(() => {
-    document.title = 'How It Works | MCPLens';
+    document.title = 'How Agent Commerce QA Works | MCPLens';
   }, []);
 
   return (
@@ -75,7 +75,7 @@ export default function HowItWorksPage() {
         {/* Hero */}
         <div className="text-center mb-16">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-4">
-            Your store already talks to AI agents
+            Agent-commerce QA, explained
           </h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
             Shopify gave every store a machine-readable interface &mdash; the door AI uses to browse
@@ -103,7 +103,7 @@ export default function HowItWorksPage() {
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-2xl">🚪</div>
               <div className="text-sm font-semibold text-slate-900">AI Interface</div>
-              <div className="text-xs text-slate-400">Your store's MCP endpoint</div>
+              <div className="text-xs text-slate-400">Commerce agent interface</div>
             </div>
             <div className="hidden sm:flex items-center justify-center">
               <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>

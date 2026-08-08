@@ -1,13 +1,15 @@
 # MCPLens
 
-**Scan any Shopify store's AI agent readiness. Lighthouse for agent commerce.**
+**Agent-commerce visibility and QA for Shopify teams and agencies.**
 
-MCPLens connects to any Shopify store's public MCP endpoint, runs agent commerce scenarios, and generates a scored report showing exactly how well AI buyer agents can discover, evaluate, and purchase products.
+MCPLens connects to any Shopify store's public commerce agent interface, runs agent-commerce scenarios, and generates a scored report showing whether AI buyer agents can discover, evaluate, and transact with the store.
+
+The near-term GTM is agency-first: free public scans, paid human-reviewed audits, and white-label/batch reports for Shopify agencies and ecommerce consultants.
 
 ## Quick Start
 
 ```bash
-# Scan any Shopify store (no setup required)
+# Scan any Shopify store
 npx mcplens scan allbirds.com
 
 # Compare stores
@@ -19,23 +21,23 @@ npx mcplens scan mystore.com --non-interactive --fail-under 70
 
 ## How It Works
 
-MCPLens connects to `https://{domain}/api/mcp` (Shopify's public MCP endpoint, available on all 5.5M+ Shopify stores) and simulates what an AI buyer agent would do:
+MCPLens connects to `https://{domain}/api/mcp` when available and simulates what an AI buyer agent would do:
 
-1. **Discovers available tools** — what can agents do on this store?
-2. **Runs 10 test scenarios** across 4 categories
-3. **Scores each category** and generates a composite 0-100 score
-4. **Generates a report** with specific issues and fix instructions
+1. **Discover available tools** - what can agents do on this store?
+2. **Run test scenarios** across 4 categories
+3. **Score each category** and generate a composite 0-100 score
+4. **Generate a report** with specific issues and fix instructions
 
 ## Scoring
 
 | Category | Weight | What It Tests |
-|---|---|---|
+|---|---:|---|
 | Data Quality | 35% | Price data, descriptions, images, structured attributes |
 | Product Discovery | 30% | Search functionality, filtering, result completeness |
 | Checkout Flow | 25% | Cart operations, checkout initiation |
-| Protocol Compliance | 10% | MCP spec adherence, error handling |
+| Technical Health | 10% | Interface reliability, response shape, error handling |
 
-Scores are color-coded: 🟢 80-100 (Good), 🟡 50-79 (Needs Work), 🔴 0-49 (Critical)
+Scores are color-coded: 80-100 good, 50-79 needs work, 0-49 critical.
 
 ## Web Scanner
 
@@ -68,7 +70,7 @@ mcplens batch --domains list.txt --output results/ --delay 1000
 Add to your GitHub Actions:
 
 ```yaml
-name: Agent Readiness Check
+name: Agent Commerce QA
 on: [push]
 jobs:
   scan:
@@ -79,40 +81,43 @@ jobs:
       - run: npx mcplens scan mystore.com --non-interactive --fail-under 70
 ```
 
-## Pricing
+## Pricing And GTM
 
-MCPLens is **open source and free** for scanning. Paid tiers add fix instructions, tracking, buyer agent simulation, and agency features:
+MCPLens is **open source and free** for scanning. The strongest paid motions are one-off audits and agency reporting before broad merchant self-serve subscriptions:
 
-| | Free | Pro ($50/mo) | Max ($200/mo) | Agency ($600/mo) |
+| | Free | Human Audit ($199) | Pro ($79/mo) | Agency ($600/mo) |
 |---|---|---|---|---|
-| Layer 1 scan + score | ✅ | ✅ | ✅ | ✅ |
-| Shareable report URL | ✅ | ✅ | ✅ | ✅ |
-| Fix instructions | — | ✅ | ✅ | ✅ |
-| Store tracking | — | 3 stores | 15 stores | 50 stores |
-| Scheduled scans | — | Weekly | Daily | Daily |
-| CI/CD integration | — | ✅ | ✅ | ✅ |
-| Email alerts | — | ✅ | ✅ | ✅ |
-| Simulated Buyer Agent (Layer 3) | — | — | Early Access | ✅ |
-| LLM Quality Assessment (Layer 2) | — | — | Early Access | ✅ |
-| Revenue impact calculator | — | — | ✅ | ✅ |
-| White-label reports | — | — | — | ✅ |
-| API access | — | — | — | ✅ |
-| Batch scanning | — | — | — | ✅ |
-| Team/multi-user | — | — | — | ✅ |
-| Agency bonuses | — | — | — | ✅ |
+| Automated scan + score | Yes | Yes | Yes | Yes |
+| Shareable report URL | Yes | Yes | Yes | Yes |
+| Human-reviewed fix report | No | Yes | No | Yes |
+| Fix instructions | No | Yes | Yes | Yes |
+| Store tracking | No | No | 15 stores | 100 stores |
+| Scheduled scans | No | No | Daily | Daily |
+| CI/CD integration | No | No | Yes | Yes |
+| Email alerts | No | No | Yes | Yes |
+| Simulated buyer agent | No | No | Yes | Yes |
+| LLM quality assessment | No | No | Yes | Yes |
+| White-label reports | No | No | No | Yes |
+| API access | No | No | No | Yes |
+| Batch scanning | No | No | No | Yes |
+| Team/multi-user | No | No | No | Yes |
 
-Annual billing saves 2 months on every plan. Founding user promos available for the first 100 users.
+Validation target: sell $99-$299 audits first, then convert agencies that need repeated white-label reports into the $600/month plan.
 
 ## Why MCPLens?
 
-Every Shopify store now has a public MCP endpoint (`/api/mcp`). AI buyer agents from ChatGPT, Gemini, and others are using these endpoints to shop. But most merchants have no idea whether agents can actually use their store effectively.
+Agentic commerce is moving quickly, but merchant demand is still early. Most teams do not need another abstract MCP dashboard; they need a concrete answer to one question: can agent-mediated shoppers find the right products, understand the offer, and reach checkout?
 
-MCPLens fills that gap: **scan → score → fix → track**.
+MCPLens fills that gap: **scan -> score -> fix -> package**.
 
-- 🔍 **Scan** any store without their participation (public endpoints)
-- 📊 **Score** across 4 categories with a 0-100 composite
-- 🔧 **Fix** with specific, actionable recommendations
-- 📈 **Track** improvements over time (paid feature)
+- **Scan** Shopify stores without setup
+- **Score** across 4 categories with a 0-100 composite
+- **Fix** with specific, actionable recommendations
+- **Package** the findings into client-ready agency reports
+
+## 30-Day Validation
+
+See [docs/gtm-validation.md](docs/gtm-validation.md) for the agency-first validation plan.
 
 ## Tech Stack
 
@@ -122,14 +127,10 @@ MCPLens fills that gap: **scan → score → fix → track**.
 - **Database:** MongoDB
 - **Billing:** Stripe
 
-## Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT - see [LICENSE](LICENSE) for details.
 
 ---
 
-Built with [Claude Code](https://claude.ai/claude-code) | [Web Scanner](https://mcplens.dev/scan) | [GitHub](https://github.com/reesthomas212/mcplens)
+Built with Claude Code | [Web Scanner](https://mcplens.dev/scan) | [GitHub](https://github.com/reesthomas212/mcplens)

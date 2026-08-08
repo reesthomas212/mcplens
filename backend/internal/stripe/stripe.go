@@ -224,26 +224,42 @@ func (s *Service) CreateCheckoutSession(ctx context.Context, req CheckoutRequest
 			}
 		}
 	} else {
-		var priceID string
-		var err error
-		if req.PlanID != nil {
-			entityType := "plan_" + req.BillingInterval
-			priceID, err = s.GetOrCreatePrice(ctx, entityType, *req.PlanID, req.PlanName, req.AmountCents, req.BillingInterval, req.Currency)
-		} else {
-			priceID, err = s.GetOrCreatePrice(ctx, "bundle", *req.BundleID, req.BundleName, req.AmountCents, "", req.Currency)
-		}
-		if err != nil {
-			return "", err
-		}
 		qty := int64(1)
 		if req.Quantity > 0 {
 			qty = req.Quantity
 		}
-		lineItems = []*stripe.CheckoutSessionLineItemParams{
-			{
-				Price:    stripe.String(priceID),
-				Quantity: stripe.Int64(qty),
-			},
+		switch {
+		case req.PlanID != nil:
+			priceID, err := s.GetOrCreatePrice(ctx, "plan_" + req.BillingInterval, *req.PlanID, req.PlanName, req.AmountCents, req.BillingInterval, req.Currency)
+			if err != nil {
+				return "", err
+			}
+			lineItems = []*stripe.CheckoutSessionLineItemParams{
+				{Price: stripe.String(priceID), Quantity: stripe.Int64(qty)},
+			}
+		case req.BundleID != nil:
+			priceID, err := s.GetOrCreatePrice(ctx, "bundle", *req.BundleID, req.BundleName, req.AmountCents, "", req.Currency)
+			if err != nil {
+				return "", err
+			}
+			lineItems = []*stripe.CheckoutSessionLineItemParams{
+				{Price: stripe.String(priceID), Quantity: stripe.Int64(qty)},
+			}
+		default:
+			// One-time amount with no persisted plan/bundle (e.g. scan purchase):
+			// build an inline ad-hoc price so we never dereference a nil BundleID.
+			lineItems = []*stripe.CheckoutSessionLineItemParams{
+				{
+					PriceData: &stripe.CheckoutSessionLineItemPriceDataParams{
+						Currency:   stripe.String(req.Currency),
+						UnitAmount: stripe.Int64(req.AmountCents),
+						ProductData: &stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+							Name: stripe.String(req.BundleName),
+						},
+					},
+					Quantity: stripe.Int64(qty),
+				},
+			}
 		}
 	}
 

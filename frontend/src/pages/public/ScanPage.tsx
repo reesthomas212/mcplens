@@ -27,14 +27,14 @@ export default function ScanPage() {
 
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = 'Scan Your Shopify Store | MCPLens';
-    setMetaTag('og:title', 'Scan Your Shopify Store | MCPLens');
-    setMetaTag('og:description', 'Find out how ready your Shopify store is for AI buying agents. Free instant scan.');
+    document.title = 'Run Agent Commerce QA | MCPLens';
+    setMetaTag('og:title', 'Run Agent Commerce QA | MCPLens');
+    setMetaTag('og:description', 'Scan a Shopify store and see whether AI shoppers can discover products, understand product data, and reach checkout.');
     setMetaTag('og:image', `${window.location.origin}/og-image.png`);
     setMetaTag('og:type', 'website');
     setMetaTag('twitter:card', 'summary_large_image');
-    setMetaTag('twitter:title', 'Scan Your Shopify Store | MCPLens');
-    setMetaTag('twitter:description', 'Find out how ready your Shopify store is for AI buying agents. Free instant scan.');
+    setMetaTag('twitter:title', 'Run Agent Commerce QA | MCPLens');
+    setMetaTag('twitter:description', 'Scan a Shopify store and see whether AI shoppers can discover products, understand product data, and reach checkout.');
 
     return () => {
       document.title = prevTitle;
@@ -77,15 +77,15 @@ export default function ScanPage() {
           className="max-w-2xl mx-auto text-center w-full"
         >
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-1.5 text-sm text-blue-600 mb-8">
-            AI Agent Readiness Scanner
+            Agent Commerce QA Scanner
           </div>
 
           <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight tracking-tight mb-6">
-            How AI-ready is your Shopify store?
+            Can AI shoppers use this Shopify store?
           </h1>
 
           <p className="text-lg text-slate-500 leading-relaxed mb-10">
-            We connect to the store's MCP endpoint and test how well AI buyer agents can discover, evaluate, and purchase products.
+            We test whether AI buyer agents can discover products, understand product data, and reach checkout.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-xl mx-auto">

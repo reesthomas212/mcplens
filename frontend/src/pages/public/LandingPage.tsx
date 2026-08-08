@@ -40,7 +40,7 @@ export default function LandingPage() {
   useEffect(() => {
     if (!loaded) return;
     const title = branding.appName || 'MCPLens';
-    const meta = branding.landingMeta || "MCPLens scans your Shopify store and shows how well AI shopping agents can find, evaluate, and purchase your products.";
+    const meta = branding.landingMeta || "MCPLens gives Shopify teams and agencies an agent-commerce QA report: can AI shoppers discover, understand, and transact with this store?";
     document.title = `${title} — AI Agent Readiness Scanner`;
     setMetaTag('og:title', `${title} — AI Agent Readiness Scanner`);
     if (meta) setMetaTag('og:description', meta);
@@ -118,8 +118,8 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight leading-tight mb-6"
           >
-            AI agents are shopping<br />for your customers.
-            <span className="text-blue-500"> Is your store ready?</span>
+            Can AI shoppers<br />use this Shopify store?
+            <span className="text-blue-500"> Prove it.</span>
           </motion.h1>
 
           <motion.p
@@ -128,7 +128,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="text-lg text-slate-500 mb-8 max-w-xl mx-auto"
           >
-            Shopify gave every store an AI-readable interface. We check if yours works.
+            Run agent-commerce QA for Shopify stores. Get a free scan, then turn the findings into client-ready audits and white-label reports.
           </motion.p>
 
           {/* Scan input — the primary CTA */}
@@ -161,7 +161,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.5 }}
             className="text-xs text-slate-400 mt-4"
           >
-            Free. No account required. Results in 15 seconds.
+            Free. No account required. Built for agencies, consultants, and technical ecommerce teams.
           </motion.p>
         </div>
       </section>
@@ -190,18 +190,18 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           <div>
             <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center mx-auto mb-4 text-xl">📊</div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">See your score</h3>
-            <p className="text-sm text-slate-500">Instant 0-100 readiness score across 4 categories. Know exactly where AI agents get stuck.</p>
+            <h3 className="text-base font-bold text-slate-900 mb-2">Audit any store</h3>
+            <p className="text-sm text-slate-500">Instant 0-100 commerce QA score across 4 categories. See where agent-mediated shoppers get stuck.</p>
           </div>
           <div>
             <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-4 text-xl">🔧</div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">Get exact fixes</h3>
-            <p className="text-sm text-slate-500">Prioritized fix instructions with Shopify code snippets. Copy, paste, improve.</p>
+            <h3 className="text-base font-bold text-slate-900 mb-2">Sell the fix</h3>
+            <p className="text-sm text-slate-500">Use the report to explain catalog, metadata, search, and checkout gaps in business terms.</p>
           </div>
           <div>
             <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center mx-auto mb-4 text-xl">📈</div>
-            <h3 className="text-base font-bold text-slate-900 mb-2">Track over time</h3>
-            <p className="text-sm text-slate-500">Monitor your store and competitors. Get alerts when scores change. Stay ahead.</p>
+            <h3 className="text-base font-bold text-slate-900 mb-2">Package reports</h3>
+            <p className="text-sm text-slate-500">Create repeatable white-label scans for client work, retainers, and competitive QA.</p>
           </div>
         </div>
       </motion.section>
@@ -215,13 +215,13 @@ export default function LandingPage() {
         className="px-6 py-16 border-t border-slate-200 bg-white"
       >
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-3">See how stores rank</h2>
-          <p className="text-slate-500 text-sm mb-8">Real scores from real Shopify stores. Updated continuously.</p>
+          <h2 className="text-2xl font-bold text-slate-900 mb-3">Turn public scans into client conversations</h2>
+          <p className="text-slate-500 text-sm mb-8">Benchmark real Shopify stores and use the findings as an agency audit wedge.</p>
           <Link
             to="/leaderboard"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold rounded-full transition-colors text-sm"
           >
-            View Leaderboard &rarr;
+            View Benchmark Data &rarr;
           </Link>
         </div>
       </motion.section>
@@ -230,9 +230,9 @@ export default function LandingPage() {
       <section className="px-6 py-20 border-t border-slate-200">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-4">
-            Check your store in 15 seconds
+            Run the first scan
           </h2>
-          <p className="text-slate-500 mb-8">Free. No account required.</p>
+          <p className="text-slate-500 mb-8">Free scan now. Human-reviewed audit and agency reports when you need the business case.</p>
           <form
             onSubmit={handleHeroScan}
             className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"

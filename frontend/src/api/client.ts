@@ -660,7 +660,7 @@ export const myScansApi = {
 
 // --- Scan Purchases ---
 export const scanPurchaseApi = {
-  checkout: (domain: string, feature: 'assess' | 'simulate') =>
+  checkout: (domain: string, feature: 'assess' | 'simulate' | 'audit') =>
     api.post<{ checkoutUrl: string }>('/billing/scan-purchase', { domain, feature }).then(r => r.data),
 };
 

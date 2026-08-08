@@ -134,3 +134,25 @@ func TestIntegration_PurchaseScan_ValidSimulate(t *testing.T) {
 		t.Error("should not fail on validation for valid simulate request")
 	}
 }
+
+func TestIntegration_PurchaseScan_ValidAudit(t *testing.T) {
+	env := setupTestServer(t)
+	defer env.Cleanup()
+	testutil.MarkSystemInitialized(t, env.DB)
+
+	owner := testutil.CreateTestUser(t, env.DB, "audit@test.com", "Test1234!@#$", "Owner")
+	tenant := testutil.CreateTestTenant(t, env.DB, "Audit Tenant", owner.ID, false)
+
+	body := strings.NewReader(`{"domain":"allbirds.com","feature":"audit"}`)
+	req := env.tenantRequest(t, "POST", "/api/billing/scan-purchase", body, owner, tenant.ID.Hex())
+	resp, err := env.Client.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	// With nil Stripe, should fail at Stripe step, not validation
+	if resp.StatusCode == http.StatusBadRequest {
+		t.Error("should not fail on validation for valid audit request")
+	}
+}

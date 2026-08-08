@@ -770,11 +770,13 @@ function SimulationSection({ simulation }: { simulation: AgentSimulation }) {
   );
 }
 
-function BuyFeatureButton({ domain, feature, label, price }: { domain: string; feature: 'assess' | 'simulate'; label: string; price: string }) {
+function BuyFeatureButton({ domain, feature, label, price }: { domain: string; feature: 'assess' | 'simulate' | 'audit'; label: string; price: string }) {
   const [loading, setLoading] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleBuy = async () => {
+    setPurchaseError(null);
     // Check if user has an access token (is logged in)
     const token = localStorage.getItem('mcplens_access_token');
     if (!token) {
@@ -788,23 +790,32 @@ function BuyFeatureButton({ domain, feature, label, price }: { domain: string; f
     try {
       const { checkoutUrl } = await scanPurchaseApi.checkout(domain, feature);
       window.location.href = checkoutUrl;
-    } catch {
-      // If 401, redirect to login
-      const returnTo = encodeURIComponent(window.location.pathname);
-      navigate(`/login?returnTo=${returnTo}`);
+    } catch (err) {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 401) {
+        // Session expired — send to login, then return here
+        const returnTo = encodeURIComponent(window.location.pathname);
+        navigate(`/login?returnTo=${returnTo}`);
+        return;
+      }
+      // Any other failure (e.g. 500): stay on the page and surface the error
+      setPurchaseError('Could not start checkout. Please try again, or contact support if it persists.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <button
-      onClick={handleBuy}
-      disabled={loading}
-      className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
-    >
-      {loading ? 'Loading...' : `${label} — ${price}`}
-    </button>
+    <div className="inline-flex flex-col items-start gap-1">
+      <button
+        onClick={handleBuy}
+        disabled={loading}
+        className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
+      >
+        {loading ? 'Loading...' : `${label} — ${price}`}
+      </button>
+      {purchaseError && <span className="text-xs text-red-600">{purchaseError}</span>}
+    </div>
   );
 }
 
@@ -1253,6 +1264,22 @@ export default function ScanResultPage() {
                 </div>
               );
             })()}
+
+            {/* Human-reviewed audit offer */}
+            <div className="bg-slate-900 text-white rounded-2xl p-6">
+              <div className="flex flex-col sm:flex-row items-start gap-5">
+                <div className="flex-1">
+                  <div className="text-xs font-semibold uppercase tracking-widest text-blue-300 mb-2">
+                    Agency-ready offer
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Need a client-ready fix report?</h3>
+                  <p className="text-sm text-slate-300">
+                    Get a human-reviewed audit that translates this scan into business impact, prioritized fixes, and report copy you can forward to a merchant or internal ecommerce team.
+                  </p>
+                </div>
+                <BuyFeatureButton domain={domain!} feature="audit" label="Request Human Audit" price="$199" />
+              </div>
+            </div>
 
             {/* Partial scan notice */}
             {result.partialResults && result.partialReason && (
