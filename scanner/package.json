@@ -1,7 +1,7 @@
 {
   "name": "mcplens",
   "version": "0.1.0",
-  "description": "Scan any store's AI agent readiness — Lighthouse for agent commerce",
+  "description": "Agent-commerce visibility and QA scanner for Shopify stores",
   "type": "module",
   "bin": {
     "mcplens": "dist/cli.js"
