@@ -11,7 +11,12 @@ export interface McpConnection {
   close(): Promise<void>;
 }
 
-function buildConnection(client: Client): McpConnection {
+export interface ConnectionOptions {
+  /** UCP agent profile URL injected as meta["ucp-agent"].profile on every tool call. */
+  agentProfile?: string;
+}
+
+function buildConnection(client: Client, opts?: ConnectionOptions): McpConnection {
   return {
     client,
 
@@ -26,6 +31,12 @@ function buildConnection(client: Client): McpConnection {
 
     async callTool(name: string, params: Record<string, unknown>) {
       const start = Date.now();
+
+      // UCP endpoints require the agent profile on every call; legacy
+      // endpoints don't accept a meta field, so only inject when configured.
+      if (opts?.agentProfile && params["meta"] === undefined) {
+        params = { ...params, meta: { "ucp-agent": { profile: opts.agentProfile } } };
+      }
 
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(() => reject(new Error(`Tool call '${name}' timed out after ${TOOL_CALL_TIMEOUT_MS}ms`)), TOOL_CALL_TIMEOUT_MS);
@@ -116,7 +127,7 @@ export async function connectSSE(url: string, headers?: Record<string, string>):
  * Connect to an MCP server via Streamable HTTP (POST-based JSON-RPC).
  * This is the transport used by Shopify's MCP endpoints at https://{domain}/api/mcp.
  */
-export async function connectHTTP(url: string, headers?: Record<string, string>): Promise<McpConnection> {
+export async function connectHTTP(url: string, headers?: Record<string, string>, opts?: ConnectionOptions): Promise<McpConnection> {
   const transport = new StreamableHTTPClientTransport(new URL(url), {
     requestInit: headers ? { headers } : undefined,
   });
@@ -127,5 +138,39 @@ export async function connectHTTP(url: string, headers?: Record<string, string>)
   }, { capabilities: {} });
 
   await client.connect(transport);
-  return buildConnection(client);
+  return buildConnection(client, opts);
+}
+
+/** Default MCPLens UCP agent profile, hosted on the production frontend. */
+export const DEFAULT_UCP_AGENT_PROFILE =
+  process.env.MCPLENS_UCP_PROFILE ?? "https://mcplens.fly.dev/ucp-agent.json";
+
+/**
+ * Connect to a Shopify store's agent endpoint.
+ *
+ * Prefers the UCP endpoint (/api/ucp/mcp, requires a hosted agent profile);
+ * verifies negotiation works with a trial catalog search, and falls back to
+ * the legacy /api/mcp endpoint (shutting down 2026-08-31) if it doesn't.
+ */
+export async function connectShopify(
+  domain: string,
+  headers?: Record<string, string>,
+  log?: (msg: string) => void,
+): Promise<McpConnection> {
+  const ucpUrl = `https://${domain}/api/ucp/mcp`;
+  try {
+    const conn = await connectHTTP(ucpUrl, headers, { agentProfile: DEFAULT_UCP_AGENT_PROFILE });
+    // Negotiation failures only surface on tools/call, so probe with a
+    // cheap catalog search before committing to this endpoint.
+    const probe = await conn.callTool("search_catalog", { catalog: { query: "test" } });
+    const probeText = typeof probe.content === "string" ? probe.content : JSON.stringify(probe.content);
+    if (probeText.includes("UCP discovery failed") || probeText.includes("invalid_profile")) {
+      throw new Error("UCP negotiation failed");
+    }
+    log?.(`Connected via UCP endpoint: ${ucpUrl}`);
+    return conn;
+  } catch (err) {
+    log?.(`UCP endpoint unavailable (${err instanceof Error ? err.message : String(err)}); falling back to legacy /api/mcp`);
+  }
+  return connectHTTP(`https://${domain}/api/mcp`, headers);
 }
